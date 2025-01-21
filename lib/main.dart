@@ -56,13 +56,34 @@ class HomePage extends StatelessWidget {
                       flex: 3,
                       child: TasksSection(
                         tasks: [
-                          Task(title: 'Brush your hair.', reward: '2 KWD'),
-                          Task(title: 'Brush your hair.', reward: '2 KWD'),
-                          Task(title: 'Brush your hair.', reward: '2 KWD'),
+                          Task(
+                            title: 'Water the plants',
+                            reward: '4 KWD',
+                            duration: 3, // Task duration in hours
+                            timeLeft: 1, // Remaining time in hours
+                          ),
+                          Task(
+                            title: 'Feed the birdies',
+                            reward: '2 KWD',
+                            duration: 2,
+                            timeLeft: 1.5, // 1.5 hours left
+                          ),
+                          Task(
+                            title: 'Eat your veggies',
+                            reward: '5 KWD',
+                            duration: 1, // Task duration in hours
+                            timeLeft: 0.083, // 5 minutes = 5/60 hours
+                          ),
                         ],
                         completedTasks: [
-                          Task(title: 'Brush your hair.', reward: '2 KWD'),
-                          Task(title: 'Brush your hair.', reward: '2 KWD'),
+                          Task(
+                            title: 'Fold the laundry',
+                            reward: '5 KWD',
+                          ),
+                          Task(
+                            title: 'Comb your hair',
+                            reward: '2 KWD',
+                          ),
                         ],
                       ),
                     ),
