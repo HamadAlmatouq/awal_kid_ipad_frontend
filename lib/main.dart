@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'NavigationBar.dart' as custom;
 import 'Header.dart';
 import 'ProfileCard.dart';
 import 'TasksSection.dart';
-import 'NavigationBar.dart' as custom;
 
 void main() {
   runApp(const MyApp());
@@ -24,23 +24,43 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String _currentTab = 'Home';
+
+  Widget _buildContent() {
+    switch (_currentTab) {
+      case 'Games':
+        return const Center(
+          child: Text(
+            'Games Page',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        );
+      case 'Goals':
+        return const Center(
+          child: Text(
+            'Goals Page',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        );
+      default:
+        return const Column(
           children: [
-            const Header(
+            Header(
               greeting: 'Good Morning, Maymoona!',
               onNotificationTap: null,
               onEditTap: null,
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,20 +75,33 @@ class HomePage extends StatelessWidget {
                         points: 3213,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Expanded(
+                    SizedBox(width: 16),
+                    Expanded(
                       flex: 3,
-                      child:
-                          TasksSection(), // Remove the parameters since they're defined with default values
+                      child: TasksSection(),
                     ),
                   ],
                 ),
               ),
             ),
           ],
-        ),
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: _buildContent(),
       ),
-      bottomNavigationBar: const custom.NavigationBar(),
+      bottomNavigationBar: custom.NavigationBar(
+        onTabSelected: (selectedTab) {
+          setState(() {
+            _currentTab = selectedTab;
+          });
+        },
+      ),
     );
   }
 }
