@@ -22,7 +22,7 @@ class _NavigationBarState extends State<NavigationBar> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          height: 90, // Fixed height for navigation bar
+          height: 100, // Adjusted height for the navigation bar
           decoration: const BoxDecoration(
             color: Colors.white,
             border: Border(
@@ -51,7 +51,7 @@ class _NavigationBarState extends State<NavigationBar> {
           ),
         ),
         Container(
-          height: 20, // Safe space at the bottom
+          height: 10, // Safe space below the navigation bar
           color: Colors.white,
         ),
       ],
@@ -60,40 +60,54 @@ class _NavigationBarState extends State<NavigationBar> {
 
   Widget _buildNavItem(String label, String iconUrl) {
     bool isSelected = _selectedButton == label;
+
     return GestureDetector(
       onTap: () => _onButtonTap(label),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 60, // Fixed width for all icons
-            height: 60, // Fixed height for all icons
-            decoration: isSelected
-                ? const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.orange, // Orange background for selected
-                  )
-                : null, // No background for unselected
-            child: Center(
-              child: Image.network(
-                iconUrl,
-                width: 30, // Same size for all icons
-                height: 30,
-                color: isSelected ? Colors.white : Colors.black,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        transform: isSelected
+            ? Matrix4.translationValues(0, -10, 0) // Raise tab when selected
+            : Matrix4.identity(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: isSelected ? 70 : 60, // Circle enlarges when selected
+              height: isSelected ? 70 : 60,
+              decoration: isSelected
+                  ? const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.orange, // Orange circle for selected tab
+                    )
+                  : null,
+              child: Center(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: isSelected ? 40 : 30, // Icon enlarges when selected
+                  height: isSelected ? 40 : 30,
+                  child: Image.network(
+                    iconUrl,
+                    color: isSelected ? Colors.white : Colors.black,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.orange : Colors.black,
+            const SizedBox(height: 4),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
+              style: TextStyle(
+                fontSize: isSelected ? 16 : 14, // Enlarge text for selected tab
+                fontWeight: FontWeight.w700, // Make text bolder
+                color: isSelected ? Colors.orange : Colors.black,
+              ),
+              child: Text(label),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
