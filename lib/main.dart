@@ -1,3 +1,4 @@
+import 'package:awal_kid_ipad_frontend/games.dart';
 import 'package:flutter/material.dart';
 import 'NavigationBar.dart' as custom;
 import 'Header.dart';
@@ -37,12 +38,13 @@ class _HomePageState extends State<HomePage> {
   Widget _buildContent() {
     switch (_currentTab) {
       case 'Games':
-        return const Center(
-          child: Text(
-            'Games Page',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        );
+        return GamesPage();
+      // const Center(
+      //   child: Text(
+      //     'Games Page',
+      //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      //   ),
+      // );
       case 'Goals':
         return const Center(
           child: Text(
