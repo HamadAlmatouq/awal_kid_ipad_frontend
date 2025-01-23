@@ -1,4 +1,6 @@
+import 'package:awal_kid_ipad_frontend/screens/sign_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScannerScreen extends StatefulWidget {
@@ -21,6 +23,16 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final GoRouter router = GoRouter(
+      initialLocation: '/signin',
+      routes: [
+        GoRoute(
+          path: '/signin',
+          builder: (context, state) => SignPage(),
+        ),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Scanner'),
