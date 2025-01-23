@@ -1,9 +1,11 @@
+import 'package:awal_kid_ipad_frontend/pages/civil_id_signin.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'qr_scanner_screen.dart';
 import 'home_page.dart'; // Import the new home page
 
-class SignInPage extends StatelessWidget {
-  const SignInPage({super.key});
+class SignPage extends StatelessWidget {
+  const SignPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,12 +137,7 @@ class SignInPage extends StatelessWidget {
                 // Sign in Text
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomePage(),
-                      ),
-                    );
+                    context.go("/signin");
                   },
                   child: const Text(
                     'sign in',
