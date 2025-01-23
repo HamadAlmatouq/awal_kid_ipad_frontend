@@ -366,12 +366,26 @@ class CustomTaskDialog extends StatelessWidget {
       child: Stack(
         alignment: Alignment.topRight,
         children: [
+          // Container(
+          //   width: MediaQuery.of(context).size.width * 0.9,
+          //   constraints: const BoxConstraints(maxWidth: 500),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     borderRadius: BorderRadius.circular(20),
+          //   ),
+          //   child: Column(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
           Container(
             width: MediaQuery.of(context).size.width * 0.9,
             constraints: const BoxConstraints(maxWidth: 500),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.orange, // Border color
+                width: 8, // Adjust this for boldness
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -451,15 +465,24 @@ class CustomTaskDialog extends StatelessWidget {
                         ),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: const Center(
-                        child: Text(
-                          'Done',
-                          style: TextStyle(
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.celebration,
                             color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
+                            size: 36, // Icon size for kid-friendly appearance
                           ),
-                        ),
+                          SizedBox(width: 8), // Space between icon and text
+                          Text(
+                            'Done',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -467,12 +490,24 @@ class CustomTaskDialog extends StatelessWidget {
               ],
             ),
           ),
+
           Positioned(
             top: 10,
             right: 10,
             child: GestureDetector(
               onTap: () => Navigator.of(context).pop(),
-              child: const Icon(Icons.close, color: Colors.black),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white, // Match the Done button color
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(8),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.orange,
+                  size: 48, // Larger size
+                ),
+              ),
             ),
           ),
         ],
