@@ -12,20 +12,38 @@ class _GoalsPageState extends State<GoalsPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
+  int totalDots = 20; // Total number of dots
+  List<bool> isReached = []; // Tracks whether each dot has been reached
   int currentGoal = 15; // Number of completed dots
   double userSavings = 33.87; // Current savings
   final double maxSavings = 55.0; // Target savings
-  final int totalDots = 20; // Total number of dots
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize the isReached list with all values set to false
+    isReached = List.generate(totalDots, (index) => false);
+
+    // Animation controller setup
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     );
-    _animation = Tween<double>(begin: 0, end: currentGoal.toDouble()).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+
+    _animation = Tween<double>(begin: 0, end: totalDots.toDouble()).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut))
+      ..addListener(() {
+        setState(() {
+          // Update reached dots dynamically as the avatar moves
+          for (int i = 0; i < totalDots; i++) {
+            if (_animation.value >= i) {
+              isReached[i] = true; // Mark dot as reached
+            }
+          }
+        });
+      });
+
     _animationController.forward();
   }
 
@@ -85,32 +103,11 @@ class _GoalsPageState extends State<GoalsPage>
     final screenHeight = MediaQuery.of(context).size.height;
 
     // Define positions for the previous goal and the secret goal
-    final previousGoalPosition =
-        Offset(100, screenHeight * 0.3); // Adjusted upward
-    final secretGoalPosition =
-        Offset(screenWidth - 250, screenHeight * 0.3); // Brought closer
+    final previousGoalPosition = Offset(100, screenHeight * 0.3);
+    final secretGoalPosition = Offset(screenWidth - 250, screenHeight * 0.3);
 
     // Calculate spacing between dots
     final dx = (secretGoalPosition.dx - previousGoalPosition.dx) / totalDots;
-    final dy = (secretGoalPosition.dy - previousGoalPosition.dy) / totalDots;
-
-    // Generate wiggly line dots between the two goals
-    final dots = List.generate(totalDots, (index) {
-      final isReached = index < currentGoal; // Reached dots logic
-      final xPosition = previousGoalPosition.dx +
-          index * dx +
-          60; // Shifted 60px to the right
-      final yPosition = previousGoalPosition.dy +
-          20 * sin(index * pi / 3); // Smooth wavy line
-      return Positioned(
-        left: xPosition,
-        top: yPosition,
-        child: CircleAvatar(
-          radius: 6, // Dot size
-          backgroundColor: isReached ? Colors.white : Colors.grey,
-        ),
-      );
-    });
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -151,14 +148,14 @@ class _GoalsPageState extends State<GoalsPage>
                 color: Colors.white70,
               ),
             ),
-            const SizedBox(height: 20), // Reduced spacing
+            const SizedBox(height: 20),
             Expanded(
               child: Stack(
                 children: [
                   // Achieved goal (left)
                   Positioned(
                     left: previousGoalPosition.dx - 75,
-                    top: previousGoalPosition.dy - 125, // Adjusted upward
+                    top: previousGoalPosition.dy - 125,
                     child: Column(
                       children: [
                         Image.asset(
@@ -170,25 +167,42 @@ class _GoalsPageState extends State<GoalsPage>
                         const Text(
                           'Stanley Cup',
                           style: TextStyle(
-                            fontSize: 16, // Smaller font size
+                            fontSize: 16,
                             color: Colors.white,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  // Wiggly line dots path
-                  ...dots,
+                  // Dots along the wiggly line
+                  ...List.generate(totalDots, (index) {
+                    final xPosition = previousGoalPosition.dx + index * dx + 60;
+                    final yPosition =
+                        previousGoalPosition.dy + 20 * sin(index * pi / 3);
+
+                    return Positioned(
+                      left: xPosition,
+                      top: yPosition,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        child: CircleAvatar(
+                          radius: 6, // Dot size
+                          backgroundColor:
+                              isReached[index] ? Colors.white : Colors.grey,
+                        ),
+                      ),
+                    );
+                  }),
                   // Secret goal (right)
                   Positioned(
                     left: secretGoalPosition.dx - 75,
-                    top: secretGoalPosition.dy - 125, // Adjusted upward
+                    top: secretGoalPosition.dy - 125,
                     child: Column(
                       children: [
                         const Text(
                           'To unlock, your savings should exceed this amount:',
                           style: TextStyle(
-                            fontSize: 16, // Smaller font size
+                            fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Colors.white70,
                           ),
@@ -197,14 +211,14 @@ class _GoalsPageState extends State<GoalsPage>
                         Text(
                           '${maxSavings.toStringAsFixed(0)} KWD',
                           style: const TextStyle(
-                            fontSize: 20, // Adjusted size
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Container(
-                          width: 150, // Smaller size
+                          width: 150,
                           height: 150,
                           decoration: BoxDecoration(
                             color: Colors.grey[400],
@@ -214,7 +228,7 @@ class _GoalsPageState extends State<GoalsPage>
                             child: Text(
                               '?',
                               style: TextStyle(
-                                fontSize: 40, // Smaller font size
+                                fontSize: 40,
                                 color: Colors.white,
                               ),
                             ),
@@ -228,12 +242,10 @@ class _GoalsPageState extends State<GoalsPage>
                     animation: _animation,
                     builder: (context, child) {
                       final index = _animation.value.toInt();
-                      final xOffset = previousGoalPosition.dx +
-                          index * dx +
-                          60; // Adjusted right
+                      final xOffset = previousGoalPosition.dx + index * dx + 60;
                       final yOffset = previousGoalPosition.dy +
                           20 * sin(index * pi / 3) -
-                          40; // Shifted avatar upward by 40px
+                          40; // Adjusted upward
 
                       return Positioned(
                         left: xOffset,
@@ -241,7 +253,7 @@ class _GoalsPageState extends State<GoalsPage>
                         child: Column(
                           children: [
                             CircleAvatar(
-                              radius: 60, // Smaller avatar
+                              radius: 60, // Avatar size
                               backgroundImage:
                                   const AssetImage('assets/images/avatar.png'),
                             ),
@@ -249,16 +261,9 @@ class _GoalsPageState extends State<GoalsPage>
                             Text(
                               'Savings',
                               style: const TextStyle(
-                                fontSize: 16, // Adjusted font size
+                                fontSize: 16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '${userSavings.toStringAsFixed(3)} KWD',
-                              style: const TextStyle(
-                                fontSize: 16, // Adjusted size
-                                color: Colors.white,
                               ),
                             ),
                             ElevatedButton(
