@@ -1,8 +1,8 @@
 import 'package:awal_kid_ipad_frontend/pages/civil_id_signin.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'qr_scanner_screen.dart';
-import 'home_page.dart'; // Import the new home page
+import '../screens/qr_scanner_screen.dart';
+import '../screens/home_page.dart'; // Import the new home page
 
 class SignPage extends StatelessWidget {
   const SignPage({super.key});
