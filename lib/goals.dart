@@ -12,10 +12,10 @@ class _GoalsPageState extends State<GoalsPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  int currentGoal = 10; // Number of completed dots
+  int currentGoal = 15; // Number of completed dots
   double userSavings = 33.87; // Current savings
   final double maxSavings = 55.0; // Target savings
-  final int totalDots = 20; // Total number of dots in the wiggly path
+  final int totalDots = 20; // Total number of dots
 
   @override
   void initState() {
@@ -84,15 +84,25 @@ class _GoalsPageState extends State<GoalsPage>
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // Adjusted vertical base height for better visibility
-    final baseHeight = screenHeight * 0.4;
+    // Define positions for the previous goal and the secret goal
+    final previousGoalPosition =
+        Offset(100, screenHeight * 0.3); // Adjusted upward
+    final secretGoalPosition =
+        Offset(screenWidth - 250, screenHeight * 0.3); // Brought closer
 
-    // Generate wiggly line dots using sine wave
+    // Calculate spacing between dots
+    final dx = (secretGoalPosition.dx - previousGoalPosition.dx) / totalDots;
+    final dy = (secretGoalPosition.dy - previousGoalPosition.dy) / totalDots;
+
+    // Generate wiggly line dots between the two goals
+    // Generate wiggly line dots between the two goals
     final dots = List.generate(totalDots, (index) {
       final isReached = index < currentGoal; // Reached dots logic
-      final xPosition = index * (screenWidth / totalDots);
-      final yPosition =
-          baseHeight + 50 * sin(index * pi / 4); // Sinusoidal wave
+      final xPosition = previousGoalPosition.dx +
+          index * dx +
+          60; // Shifted 20px to the right
+      final yPosition = previousGoalPosition.dy +
+          20 * sin(index * pi / 3); // Smooth wavy line
       return Positioned(
         left: xPosition,
         top: yPosition,
@@ -120,7 +130,7 @@ class _GoalsPageState extends State<GoalsPage>
                 const Text(
                   'Goals',
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 28, // Slightly smaller
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -129,7 +139,7 @@ class _GoalsPageState extends State<GoalsPage>
                 Icon(
                   Icons.flag, // Example icon for "Goals"
                   color: Colors.white,
-                  size: 30,
+                  size: 24, // Adjusted size
                 ),
               ],
             ),
@@ -137,31 +147,31 @@ class _GoalsPageState extends State<GoalsPage>
             const Text(
               'Increase your savings to reach your goals',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16, // Adjusted font size
                 fontWeight: FontWeight.w400,
                 color: Colors.white70,
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20), // Reduced spacing
             Expanded(
               child: Stack(
                 children: [
                   // Achieved goal (left)
                   Positioned(
-                    left: 0,
-                    top: baseHeight - 100, // Shifted upward
+                    left: previousGoalPosition.dx - 75,
+                    top: previousGoalPosition.dy - 125, // Adjusted upward
                     child: Column(
                       children: [
                         Image.asset(
                           'assets/images/card.png',
-                          width: 100, // Enlarged size
-                          height: 100,
+                          width: 150, // Smaller size
+                          height: 150,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 5),
                         const Text(
                           'Stanley Cup',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 16, // Smaller font size
                             color: Colors.white,
                           ),
                         ),
@@ -172,14 +182,14 @@ class _GoalsPageState extends State<GoalsPage>
                   ...dots,
                   // Secret goal (right)
                   Positioned(
-                    right: 0,
-                    top: baseHeight - 60, // Shifted upward
+                    left: secretGoalPosition.dx - 75,
+                    top: secretGoalPosition.dy - 125, // Adjusted upward
                     child: Column(
                       children: [
                         const Text(
                           'To unlock, your savings should exceed this amount:',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16, // Smaller font size
                             fontWeight: FontWeight.w400,
                             color: Colors.white70,
                           ),
@@ -188,24 +198,24 @@ class _GoalsPageState extends State<GoalsPage>
                         Text(
                           '${maxSavings.toStringAsFixed(0)} KWD',
                           style: const TextStyle(
-                            fontSize: 22,
+                            fontSize: 20, // Adjusted size
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 5),
                         Container(
-                          width: 100, // Enlarged size
-                          height: 100,
+                          width: 150, // Smaller size
+                          height: 150,
                           decoration: BoxDecoration(
                             color: Colors.grey[400],
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Center(
                             child: Text(
                               '?',
                               style: TextStyle(
-                                fontSize: 40,
+                                fontSize: 40, // Smaller font size
                                 color: Colors.white,
                               ),
                             ),
@@ -219,19 +229,25 @@ class _GoalsPageState extends State<GoalsPage>
                     animation: _animation,
                     builder: (context, child) {
                       final index = _animation.value.toInt();
-                      final xOffset = index * (screenWidth / totalDots);
-                      final yOffset = baseHeight +
-                          50 * sin(index * pi / 4); // Sinusoidal motion
+                      final xOffset = previousGoalPosition.dx + index * dx;
+                      final yOffset = previousGoalPosition.dy +
+                          20 * sin(index * pi / 3); // Sinusoidal motion
 
                       return Positioned(
                         left: xOffset,
                         top: yOffset,
                         child: Column(
                           children: [
+                            CircleAvatar(
+                              radius: 60, // Smaller avatar
+                              backgroundImage:
+                                  const AssetImage('assets/images/avatar.png'),
+                            ),
+                            const SizedBox(height: 5),
                             Text(
                               'Savings',
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 16, // Adjusted font size
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -239,7 +255,7 @@ class _GoalsPageState extends State<GoalsPage>
                             Text(
                               '${userSavings.toStringAsFixed(3)} KWD',
                               style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 16, // Adjusted size
                                 color: Colors.white,
                               ),
                             ),
@@ -249,12 +265,6 @@ class _GoalsPageState extends State<GoalsPage>
                                 backgroundColor: Colors.orange,
                               ),
                               child: const Text('+ Add To Savings'),
-                            ),
-                            const SizedBox(height: 10),
-                            CircleAvatar(
-                              radius: 30, // Enlarged size
-                              backgroundImage:
-                                  const AssetImage('assets/images/avatar.png'),
                             ),
                           ],
                         ),
