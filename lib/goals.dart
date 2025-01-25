@@ -95,12 +95,11 @@ class _GoalsPageState extends State<GoalsPage>
     final dy = (secretGoalPosition.dy - previousGoalPosition.dy) / totalDots;
 
     // Generate wiggly line dots between the two goals
-    // Generate wiggly line dots between the two goals
     final dots = List.generate(totalDots, (index) {
       final isReached = index < currentGoal; // Reached dots logic
       final xPosition = previousGoalPosition.dx +
           index * dx +
-          60; // Shifted 20px to the right
+          60; // Shifted 60px to the right
       final yPosition = previousGoalPosition.dy +
           20 * sin(index * pi / 3); // Smooth wavy line
       return Positioned(
@@ -229,9 +228,12 @@ class _GoalsPageState extends State<GoalsPage>
                     animation: _animation,
                     builder: (context, child) {
                       final index = _animation.value.toInt();
-                      final xOffset = previousGoalPosition.dx + index * dx;
+                      final xOffset = previousGoalPosition.dx +
+                          index * dx +
+                          60; // Adjusted right
                       final yOffset = previousGoalPosition.dy +
-                          20 * sin(index * pi / 3); // Sinusoidal motion
+                          20 * sin(index * pi / 3) -
+                          40; // Shifted avatar upward by 40px
 
                       return Positioned(
                         left: xOffset,
