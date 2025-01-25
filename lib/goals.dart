@@ -191,7 +191,7 @@ class _GoalsPageState extends State<GoalsPage>
                     const Text(
                       'Goals',
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 36, // Enlarged font size
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -200,7 +200,7 @@ class _GoalsPageState extends State<GoalsPage>
                     Icon(
                       Icons.flag,
                       color: Colors.white,
-                      size: 24,
+                      size: 28,
                     ),
                   ],
                 ),
@@ -208,7 +208,7 @@ class _GoalsPageState extends State<GoalsPage>
                 const Text(
                   'Increase your savings to reach your goals',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 20, // Enlarged font size
                     fontWeight: FontWeight.w400,
                     color: Colors.white70,
                   ),
@@ -232,7 +232,7 @@ class _GoalsPageState extends State<GoalsPage>
                             const Text(
                               'Stanley Cup',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 20, // Enlarged font size
                                 color: Colors.white,
                               ),
                             ),
@@ -266,9 +266,9 @@ class _GoalsPageState extends State<GoalsPage>
                         child: Column(
                           children: [
                             const Text(
-                              'To unlock, your savings should exceed this amount:',
+                              'To unlock,\nyour savings should \nexceed this amount:',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 18, // Enlarged font size
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white70,
                               ),
@@ -277,7 +277,7 @@ class _GoalsPageState extends State<GoalsPage>
                             Text(
                               '${maxSavings.toStringAsFixed(0)} KWD',
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 22, // Enlarged font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -294,7 +294,7 @@ class _GoalsPageState extends State<GoalsPage>
                                 child: Text(
                                   '?',
                                   style: TextStyle(
-                                    fontSize: 40,
+                                    fontSize: 50, // Enlarged font size
                                     color: Colors.white,
                                   ),
                                 ),
@@ -328,7 +328,7 @@ class _GoalsPageState extends State<GoalsPage>
                                 Text(
                                   'Savings',
                                   style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 20, // Enlarged font size
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -336,7 +336,7 @@ class _GoalsPageState extends State<GoalsPage>
                                 Text(
                                   '${userSavings.toStringAsFixed(3)} KWD',
                                   style: const TextStyle(
-                                    fontSize: 20, // Larger and bolder font
+                                    fontSize: 22, // Enlarged font size
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -346,7 +346,11 @@ class _GoalsPageState extends State<GoalsPage>
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.orange,
                                   ),
-                                  child: const Text('+ Add To Savings'),
+                                  child: const Text(
+                                    '+ Add To Savings',
+                                    style: TextStyle(
+                                        fontSize: 18), // Enlarged font
+                                  ),
                                 ),
                               ],
                             ),
@@ -371,7 +375,7 @@ class _GoalsPageState extends State<GoalsPage>
                 child: const Text(
                   '🎉 Goal Reached! Congratulations! 🎉',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24, // Enlarged font size
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
