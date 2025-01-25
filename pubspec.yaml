@@ -16,6 +16,7 @@ dependencies:
   jwt_decode: ^0.3.1
   shared_preferences: ^2.3.5
   provider: ^6.1.2
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:

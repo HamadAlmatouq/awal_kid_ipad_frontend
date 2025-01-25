@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:confetti/confetti.dart';
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({Key? key}) : super(key: key);
@@ -12,15 +13,22 @@ class _GoalsPageState extends State<GoalsPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late ConfettiController _confettiController; // Confetti animation controller
   int totalDots = 20; // Total number of dots
   double userSavings = 33.87; // Current savings (dummy data)
   final double maxSavings = 55.0; // Target savings (dummy data)
   List<bool> isReached = []; // Tracks whether each dot has been reached
   int avatarCurrentDot = 0; // Tracks the current dot of the avatar
+  bool goalReached = false; // Prevents multiple triggers
+  bool showBanner = false; // Controls the visibility of the celebration banner
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize ConfettiController
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
 
     // Initialize dots as unreached
     isReached = List.generate(totalDots, (index) => false);
@@ -47,6 +55,12 @@ class _GoalsPageState extends State<GoalsPage>
             }
           }
           avatarCurrentDot = _animation.value.toInt(); // Update current dot
+
+          // Trigger celebration when goal is reached (only once)
+          if (userSavings >= maxSavings && !goalReached) {
+            goalReached = true; // Mark goal as reached
+            _showCelebration();
+          }
         });
       });
 
@@ -55,8 +69,24 @@ class _GoalsPageState extends State<GoalsPage>
 
   @override
   void dispose() {
-    _animationController.dispose();
-    super.dispose();
+    _animationController.dispose(); // Dispose AnimationController first
+    _confettiController.dispose(); // Dispose ConfettiController here
+    super.dispose(); // Call the superclass dispose method last
+  }
+
+  void _showCelebration() {
+    setState(() {
+      showBanner = true; // Show the banner
+    });
+
+    _confettiController.play(); // Start confetti animation
+
+    // Hide the banner after 3 seconds
+    Future.delayed(const Duration(seconds: 5), () {
+      setState(() {
+        showBanner = false; // Hide the banner
+      });
+    });
   }
 
   void _showAddToSavingsDialog() {
@@ -112,6 +142,12 @@ class _GoalsPageState extends State<GoalsPage>
 
                     // Restart animation
                     _animationController.forward(from: 0);
+
+                    // Trigger celebration if goal is reached
+                    if (userSavings >= maxSavings && !goalReached) {
+                      goalReached = true;
+                      _showCelebration();
+                    }
                   });
                 }
                 Navigator.pop(context);
@@ -142,182 +178,224 @@ class _GoalsPageState extends State<GoalsPage>
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Row(
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Goals',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Icon(
-                  Icons.flag,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Increase your savings to reach your goals',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Stack(
-                children: [
-                  // Achieved goal (left)
-                  Positioned(
-                    left: previousGoalPosition.dx - 75,
-                    top: previousGoalPosition.dy - 125,
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/images/card.png',
-                          width: 150,
-                          height: 150,
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Stanley Cup',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Dots along the wiggly line
-                  ...List.generate(totalDots, (index) {
-                    final xPosition = previousGoalPosition.dx + index * dx + 60;
-                    final yPosition =
-                        previousGoalPosition.dy + 20 * sin(index * pi / 3);
-
-                    return Positioned(
-                      left: xPosition,
-                      top: yPosition,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        child: CircleAvatar(
-                          radius: 6,
-                          backgroundColor:
-                              isReached[index] ? Colors.white : Colors.grey,
-                        ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    const Text(
+                      'Goals',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                    );
-                  }),
-                  // Secret goal (right)
-                  Positioned(
-                    left: secretGoalPosition.dx - 75,
-                    top: secretGoalPosition.dy - 125,
-                    child: Column(
-                      children: [
-                        const Text(
-                          'To unlock, your savings should exceed this amount:',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          '${maxSavings.toStringAsFixed(0)} KWD',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[400],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '?',
-                              style: TextStyle(
-                                fontSize: 40,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
+                    const SizedBox(width: 10),
+                    Icon(
+                      Icons.flag,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Increase your savings to reach your goals',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white70,
                   ),
-                  // Avatar animation
-                  AnimatedBuilder(
-                    animation: _animation,
-                    builder: (context, child) {
-                      final index = _animation.value.toInt();
-                      final xOffset = previousGoalPosition.dx + index * dx + 60;
-                      final yOffset = previousGoalPosition.dy +
-                          20 * sin(index * pi / 3) -
-                          40;
-
-                      return Positioned(
-                        left: xOffset,
-                        top: yOffset,
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Achieved goal (left)
+                      Positioned(
+                        left: previousGoalPosition.dx - 75,
+                        top: previousGoalPosition.dy - 125,
                         child: Column(
                           children: [
-                            CircleAvatar(
-                              radius: 60,
-                              backgroundImage:
-                                  const AssetImage('assets/images/avatar.png'),
+                            Image.asset(
+                              'assets/images/card.png',
+                              width: 150,
+                              height: 150,
                             ),
                             const SizedBox(height: 5),
-                            Text(
-                              'Savings',
-                              style: const TextStyle(
+                            const Text(
+                              'Stanley Cup',
+                              style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
-                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                            Text(
-                              '${userSavings.toStringAsFixed(3)} KWD',
-                              style: const TextStyle(
-                                fontSize: 20, // Larger and bolder font
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: _showAddToSavingsDialog,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
-                              ),
-                              child: const Text('+ Add To Savings'),
                             ),
                           ],
                         ),
-                      );
-                    },
+                      ),
+                      // Dots along the wiggly line
+                      ...List.generate(totalDots, (index) {
+                        final xPosition =
+                            previousGoalPosition.dx + index * dx + 60;
+                        final yPosition =
+                            previousGoalPosition.dy + 20 * sin(index * pi / 3);
+
+                        return Positioned(
+                          left: xPosition,
+                          top: yPosition,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            child: CircleAvatar(
+                              radius: 6,
+                              backgroundColor:
+                                  isReached[index] ? Colors.white : Colors.grey,
+                            ),
+                          ),
+                        );
+                      }),
+                      // Secret goal (right)
+                      Positioned(
+                        left: secretGoalPosition.dx - 75,
+                        top: secretGoalPosition.dy - 125,
+                        child: Column(
+                          children: [
+                            const Text(
+                              'To unlock, your savings should exceed this amount:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              '${maxSavings.toStringAsFixed(0)} KWD',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[400],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  '?',
+                                  style: TextStyle(
+                                    fontSize: 40,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Avatar animation
+                      AnimatedBuilder(
+                        animation: _animation,
+                        builder: (context, child) {
+                          final index = _animation.value.toInt();
+                          final xOffset =
+                              previousGoalPosition.dx + index * dx + 60;
+                          final yOffset = previousGoalPosition.dy +
+                              20 * sin(index * pi / 3) -
+                              40;
+
+                          return Positioned(
+                            left: xOffset,
+                            top: yOffset,
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 60,
+                                  backgroundImage: const AssetImage(
+                                      'assets/images/avatar.png'),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Savings',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '${userSavings.toStringAsFixed(3)} KWD',
+                                  style: const TextStyle(
+                                    fontSize: 20, // Larger and bolder font
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: _showAddToSavingsDialog,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                  child: const Text('+ Add To Savings'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          // Celebration Banner
+          if (showBanner)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.orange,
+                padding: const EdgeInsets.all(16),
+                child: const Text(
+                  '🎉 Goal Reached! Congratulations! 🎉',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
-          ],
-        ),
+
+          // Confetti Animation
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              colors: const [
+                Colors.blue,
+                Colors.orange,
+                Colors.pink,
+                Colors.green
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
