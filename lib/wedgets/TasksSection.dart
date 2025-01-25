@@ -43,6 +43,12 @@ class _TasksSectionState extends State<TasksSection> {
     _fetchTasks();
   }
 
+  String _formatReward(double amount) {
+    return amount % 1 == 0
+        ? '${amount.toInt()} KWD'
+        : '${amount.toStringAsFixed(1)} KWD';
+  }
+
   Future<void> _fetchTasks() async {
     try {
       final response = await Client.dio.get('/kid/tasks');
@@ -59,7 +65,7 @@ class _TasksSectionState extends State<TasksSection> {
                 'Task: ${taskData['title']}, Remaining Duration: $remainingDurationStr, Converted: $timeLeft'); // Debug print
             return Task(
               title: taskData['title'],
-              reward: '${taskData['amount'].toDouble()} KWD',
+              reward: _formatReward(taskData['amount'].toDouble()),
               duration: taskData['duration'].toDouble(),
               timeLeft: timeLeft,
             );
