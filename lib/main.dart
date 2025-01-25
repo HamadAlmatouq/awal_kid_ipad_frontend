@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'NavigationBar.dart' as custom;
 import 'Header.dart';
 import 'ProfileCard.dart';
+import 'goals.dart';
 import 'TasksSection.dart';
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GoRouter router = GoRouter(
-      initialLocation: '/sign',
+      initialLocation: '/home',
       routes: [
         GoRoute(
           path: '/signin',
@@ -60,19 +61,8 @@ class _HomePageState extends State<HomePage> {
     switch (_currentTab) {
       case 'Games':
         return GamesPage();
-      // const Center(
-      //   child: Text(
-      //     'Games Page',
-      //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      //   ),
-      // );
       case 'Goals':
-        return const Center(
-          child: Text(
-            'Goals Page',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        );
+        return const GoalsPage();
       default:
         return const Column(
           children: [
