@@ -293,6 +293,14 @@ class _GoalsPageState extends State<GoalsPage>
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            Text(
+                              '${userSavings.toStringAsFixed(3)} KWD',
+                              style: const TextStyle(
+                                fontSize: 20, // Larger and bolder font
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                             ElevatedButton(
                               onPressed: _showAddToSavingsDialog,
                               style: ElevatedButton.styleFrom(
