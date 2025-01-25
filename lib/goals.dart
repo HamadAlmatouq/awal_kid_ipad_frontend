@@ -13,34 +13,40 @@ class _GoalsPageState extends State<GoalsPage>
   late AnimationController _animationController;
   late Animation<double> _animation;
   int totalDots = 20; // Total number of dots
+  double userSavings = 33.87; // Current savings (dummy data)
+  final double maxSavings = 55.0; // Target savings (dummy data)
   List<bool> isReached = []; // Tracks whether each dot has been reached
-  int currentGoal = 15; // Number of completed dots
-  double userSavings = 33.87; // Current savings
-  final double maxSavings = 55.0; // Target savings
+  int avatarCurrentDot = 0; // Tracks the current dot of the avatar
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize the isReached list with all values set to false
+    // Initialize dots as unreached
     isReached = List.generate(totalDots, (index) => false);
 
-    // Animation controller setup
+    // Calculate progress on page load
+    double progress = userSavings / maxSavings;
+    int avatarTargetDot = (progress * totalDots).floor();
+
+    // Set up animation to move avatar to calculated target on page load
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 5), // Smooth animation duration
     );
 
-    _animation = Tween<double>(begin: 0, end: totalDots.toDouble()).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut))
+    _animation = Tween<double>(begin: 0, end: avatarTargetDot.toDouble())
+        .animate(CurvedAnimation(
+            parent: _animationController, curve: Curves.easeInOut))
       ..addListener(() {
         setState(() {
-          // Update reached dots dynamically as the avatar moves
+          // Update dots dynamically as avatar moves
           for (int i = 0; i < totalDots; i++) {
             if (_animation.value >= i) {
-              isReached[i] = true; // Mark dot as reached
+              isReached[i] = true;
             }
           }
+          avatarCurrentDot = _animation.value.toInt(); // Update current dot
         });
       });
 
@@ -81,10 +87,31 @@ class _GoalsPageState extends State<GoalsPage>
                 if (amount != null) {
                   setState(() {
                     userSavings += amount;
-                    if (userSavings >= maxSavings) {
-                      currentGoal++;
-                      _animationController.forward(from: 0);
-                    }
+
+                    // Recalculate progress
+                    double progress = userSavings / maxSavings;
+                    int newTargetDot = (progress * totalDots).floor();
+
+                    // Animate from current dot to new target
+                    _animation = Tween<double>(
+                      begin: avatarCurrentDot.toDouble(),
+                      end: newTargetDot.toDouble(),
+                    ).animate(CurvedAnimation(
+                        parent: _animationController, curve: Curves.easeInOut))
+                      ..addListener(() {
+                        setState(() {
+                          // Update dots dynamically
+                          for (int i = 0; i < totalDots; i++) {
+                            if (_animation.value >= i) {
+                              isReached[i] = true;
+                            }
+                          }
+                          avatarCurrentDot = _animation.value.toInt();
+                        });
+                      });
+
+                    // Restart animation
+                    _animationController.forward(from: 0);
                   });
                 }
                 Navigator.pop(context);
@@ -126,16 +153,16 @@ class _GoalsPageState extends State<GoalsPage>
                 const Text(
                   'Goals',
                   style: TextStyle(
-                    fontSize: 28, // Slightly smaller
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Icon(
-                  Icons.flag, // Example icon for "Goals"
+                  Icons.flag,
                   color: Colors.white,
-                  size: 24, // Adjusted size
+                  size: 24,
                 ),
               ],
             ),
@@ -143,7 +170,7 @@ class _GoalsPageState extends State<GoalsPage>
             const Text(
               'Increase your savings to reach your goals',
               style: TextStyle(
-                fontSize: 16, // Adjusted font size
+                fontSize: 16,
                 fontWeight: FontWeight.w400,
                 color: Colors.white70,
               ),
@@ -160,7 +187,7 @@ class _GoalsPageState extends State<GoalsPage>
                       children: [
                         Image.asset(
                           'assets/images/card.png',
-                          width: 150, // Smaller size
+                          width: 150,
                           height: 150,
                         ),
                         const SizedBox(height: 5),
@@ -186,7 +213,7 @@ class _GoalsPageState extends State<GoalsPage>
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         child: CircleAvatar(
-                          radius: 6, // Dot size
+                          radius: 6,
                           backgroundColor:
                               isReached[index] ? Colors.white : Colors.grey,
                         ),
@@ -245,7 +272,7 @@ class _GoalsPageState extends State<GoalsPage>
                       final xOffset = previousGoalPosition.dx + index * dx + 60;
                       final yOffset = previousGoalPosition.dy +
                           20 * sin(index * pi / 3) -
-                          40; // Adjusted upward
+                          40;
 
                       return Positioned(
                         left: xOffset,
@@ -253,7 +280,7 @@ class _GoalsPageState extends State<GoalsPage>
                         child: Column(
                           children: [
                             CircleAvatar(
-                              radius: 60, // Avatar size
+                              radius: 60,
                               backgroundImage:
                                   const AssetImage('assets/images/avatar.png'),
                             ),
