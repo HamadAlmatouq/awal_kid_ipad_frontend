@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/client.dart';
 import 'Task.dart';
 import 'CustomTaskDialog.dart';
 
@@ -52,6 +55,42 @@ class _TaskItemState extends State<TaskItem> {
     return '${hours}h ${minutes}m ${seconds}s left';
   }
 
+  Future<void> _completeTask() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      if (token == null) {
+        print('Failed to complete task: No token found');
+        return;
+      }
+      final response = await Client.dio.post(
+        '/kid/completeTask',
+        data: {
+          'title': widget.task.title,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        widget.onComplete(widget.task);
+      } else {
+        print('Failed to complete task: ${response.statusCode}');
+        print('Response data: ${response.data}');
+      }
+    } catch (e) {
+      if (e is DioError && e.response != null) {
+        print('Failed to complete task: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      } else {
+        print('Failed to complete task: $e');
+      }
+    }
+  }
+
   void _showTaskDialog(BuildContext context) {
     Timer? dialogTimer;
 
@@ -81,9 +120,9 @@ class _TaskItemState extends State<TaskItem> {
                   widget.task.duration != null && widget.task.timeLeft != null
                       ? 1 - (widget.task.timeLeft! / widget.task.duration!)
                       : 0,
-              onDone: () {
+              onDone: () async {
                 Navigator.of(context).pop();
-                widget.onComplete(widget.task);
+                await _completeTask();
               },
             );
           },
