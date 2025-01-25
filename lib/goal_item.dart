@@ -8,7 +8,7 @@ class GoalItem extends StatelessWidget {
 
   const GoalItem({
     Key? key,
-    this.imageUrl = 'https://via.placeholder.com/150', // Placeholder image URL
+    this.imageUrl = 'assets/images/avatar.png', // Local asset path
     this.title = 'Stanley Cup',
     this.progress = 0.0,
     this.onTap,
@@ -38,18 +38,11 @@ class GoalItem extends StatelessWidget {
             // Layer 3 - Image
             Positioned(
               top: 10,
-              child: Image.network(
+              child: Image.asset(
                 imageUrl,
                 width: 160,
                 height: 90,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.broken_image,
-                    size: 90,
-                    color: Colors.grey,
-                  );
-                },
               ),
             ),
             // Layer 2 - Title

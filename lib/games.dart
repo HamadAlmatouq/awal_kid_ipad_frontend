@@ -16,8 +16,7 @@ class MyApp extends StatelessWidget {
 class GamesPage extends StatelessWidget {
   final List<Map<String, dynamic>> games = [
     {
-      'imageUrl':
-          'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/rectangl.png',
+      'imageUrl': 'assets/images/avatar.png',
       'title': 'Lemonade stand',
       'description':
           'this is a game description which is about lemons becoming juice',
@@ -25,8 +24,7 @@ class GamesPage extends StatelessWidget {
       'isGift': true,
     },
     {
-      'imageUrl':
-          'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/rectangl-2.png',
+      'imageUrl': 'assets/images/avatar.png',
       'title': 'Coin Collector',
       'description':
           'this is a game description which is about collecting coins',
@@ -34,8 +32,7 @@ class GamesPage extends StatelessWidget {
       'isGift': true,
     },
     {
-      'imageUrl':
-          'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/rectangl-3.png',
+      'imageUrl': 'assets/images/avatar.png',
       'title': 'Treasure Hunt',
       'description':
           'this is a game description which is about finding treasures',
@@ -126,8 +123,8 @@ class HeaderSection extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Image.network(
-                  'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png', // Replace with your game holder asset URL
+                child: Image.asset(
+                  'assets/images/avatar.png',
                   width: 26,
                   height: 26,
                   color: Colors.white,
@@ -220,7 +217,7 @@ class GameCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               image: DecorationImage(
-                image: NetworkImage(imageUrl),
+                image: AssetImage(imageUrl),
                 fit: BoxFit.cover,
               ),
             ),
@@ -397,10 +394,10 @@ class UsePointsSection extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  image,
-                  width: 150, // Adjusted image width
-                  height: 200, // Adjusted image height
+                child: Image.asset(
+                  'assets/images/avatar.png',
+                  width: 26,
+                  height: 26,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -411,10 +408,10 @@ class UsePointsSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.network(
-                        logo,
-                        width: 100, // Adjusted logo width
-                        height: 50, // Adjusted logo height
+                      Image.asset(
+                        'assets/images/avatar.png',
+                        width: 26,
+                        height: 26,
                         fit: BoxFit.contain,
                       ),
                       SizedBox(height: 4),

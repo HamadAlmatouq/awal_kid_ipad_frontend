@@ -45,8 +45,8 @@ class _GoalsPageState extends State<GoalsPage>
       width: 44,
       height: 44,
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: Image.network(
-        "https://dashboard.codeparrot.ai/api/image/Z5Or73hIZI-ZK8k8/frame-10-${index + 1}.png",
+      child: Image.asset(
+        'assets/images/avatar.png',
         fit: BoxFit.contain,
         color: isActive ? null : Colors.grey.withOpacity(0.5),
       ),
@@ -121,8 +121,8 @@ class _GoalsPageState extends State<GoalsPage>
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                            'https://dashboard.codeparrot.ai/api/image/Z5Or73hIZI-ZK8k8/screensh.png',
+                          child: Image.asset(
+                            'assets/images/avatar.png',
                             width: 135,
                             height: 94,
                             fit: BoxFit.cover,
@@ -272,8 +272,8 @@ class _GoalsPageState extends State<GoalsPage>
                           child: Container(
                             width: 60,
                             height: 60,
-                            child: Image.network(
-                              "https://dashboard.codeparrot.ai/api/image/Z5Or73hIZI-ZK8k8/screensh.png",
+                            child: Image.asset(
+                              'assets/images/avatar.png',
                               fit: BoxFit.contain,
                             ),
                           ),
