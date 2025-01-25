@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class ProfileCard extends StatelessWidget {
   final String avatarUrl;
-  final String kname;
   final double currentAccount;
   final double savings;
   final int steps;
@@ -11,7 +10,6 @@ class ProfileCard extends StatelessWidget {
   const ProfileCard({
     Key? key,
     required this.avatarUrl,
-    required this.kname,
     required this.currentAccount,
     required this.savings,
     required this.steps,
@@ -25,7 +23,7 @@ class ProfileCard extends StatelessWidget {
         return Stack(
           children: [
             Positioned(
-              top: 80, // Adjusted to make space for kname
+              top: 60, // Pushed the container further down
               left: 20,
               child: Container(
                 constraints: BoxConstraints(minWidth: 400),
@@ -50,6 +48,14 @@ class ProfileCard extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Text(
+                                  'Current Account',
+                                  style: TextStyle(
+                                    fontSize: 20, // Increased font size
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
                                 const SizedBox(height: 12), // Increased spacing
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -72,15 +78,6 @@ class ProfileCard extends StatelessWidget {
                                       ),
                                     ),
                                   ],
-                                ),
-                                const SizedBox(height: 8), // Moved down
-                                Text(
-                                  'Current Account',
-                                  style: TextStyle(
-                                    fontSize: 20, // Increased font size
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
                                 ),
                               ],
                             ),
@@ -223,26 +220,13 @@ class ProfileCard extends StatelessWidget {
             Positioned(
               top: 0,
               left: 20,
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 55, // Adjusted for the larger profile picture
-                    backgroundColor: Colors.white, // White circular frame
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: NetworkImage(avatarUrl),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    kname,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
+              child: CircleAvatar(
+                radius: 55, // Adjusted for the larger profile picture
+                backgroundColor: Colors.white, // White circular frame
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: NetworkImage(avatarUrl),
+                ),
               ),
             ),
           ],

@@ -88,7 +88,6 @@ class _HomePageState extends State<HomePage> {
                         child: ProfileCard(
                           avatarUrl: userData!['avatarUrl'] ??
                               'https://dashboard.codeparrot.ai/api/assets/Z43jO3Tr0Kgj1uYG',
-                          kname: userData!['Kname'],
                           currentAccount:
                               (userData!['balance'] as num).toDouble(),
                           savings: (userData!['savings'] as num).toDouble(),
