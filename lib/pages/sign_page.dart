@@ -1,4 +1,4 @@
-import 'package:awal_kid_ipad_frontend/pages/civil_id_signin.dart';
+import 'package:awal_kid_ipad_frontend/pages/Sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../screens/qr_scanner_screen.dart';

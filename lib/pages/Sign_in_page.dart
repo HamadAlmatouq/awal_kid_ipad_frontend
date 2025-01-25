@@ -2,7 +2,8 @@ import 'package:awal_kid_ipad_frontend/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import '../services/auth_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class CivilIDSignIn extends StatefulWidget {
   const CivilIDSignIn({super.key});
@@ -23,11 +24,14 @@ class _CivilIDSignInState extends State<CivilIDSignIn> {
       });
 
       try {
-        final token = await AuthService.signIn(_civilIdController.text);
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final success =
+            await authProvider.signin(civilId: _civilIdController.text);
 
         if (mounted) {
-          if (token != null) {
-            print('Login successful with token: $token'); // Debug print
+          if (success) {
+            print(
+                'Login successful with token: ${authProvider.token}'); // Debug print
             context.go("/home");
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -116,9 +120,6 @@ class _CivilIDSignInState extends State<CivilIDSignIn> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your Civil ID';
                             }
-                            // if (value.length != 12) {
-                            //   return 'Civil ID must be 12 digits';
-                            // }
                             return null;
                           },
                         ),
