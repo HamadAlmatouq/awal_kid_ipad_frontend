@@ -52,14 +52,58 @@ class _LemonadeGameState extends State<LemonadeGame> {
     }
   }
 
+  /// Play a sound effect and return its duration
+  Future<int> _playEffectWithDuration(String soundFile) async {
+    try {
+      await _effectPlayer.play(AssetSource('audio/$soundFile'));
+      Duration? duration = await _effectPlayer.getDuration();
+      return duration?.inMilliseconds ??
+          2000; // Get the sound's duration in milliseconds or default to 2000
+    } catch (e) {
+      print('Error playing effect: $e');
+      return 2000; // Default duration if something goes wrong
+    }
+  }
+
   /// Move to the next image
-  void _nextImage() {
+  Future<void> _nextImage() async {
     if (_currentIndex < _images.length - 1) {
-      _handleSoundEffects(); // Play sound effects based on the image
+      int duration = 0;
+
+      // Handle sound effects and timers for specific images
+      switch (_currentIndex + 1) {
+        case 6:
+          duration =
+              await _playEffectWithDuration('cut.mp3'); // Align with cut sound
+          break;
+        case 11:
+        case 13:
+          duration = await _playEffectWithDuration(
+              'poure.mp3'); // Align with pour sound
+          break;
+        case 15:
+          duration = await _playEffectWithDuration(
+              'sugar.mp3'); // Align with sugar sound
+          break;
+        case 9:
+          _playEffect('squeeze.mp3'); // Play immediately
+          break;
+        case 16:
+          _playEffect('sparkle.mp3'); // Play immediately
+          break;
+        default:
+          _handleSoundEffects(); // Play other sound effects
+          break;
+      }
+
+      // Delay the transition for the duration of the sound (if applicable)
+      if (duration > 0) {
+        await Future.delayed(Duration(milliseconds: duration));
+      }
+
       setState(() {
         _currentIndex++;
       });
-      _handleTimerImages(); // Check if the current image needs a timer
     }
   }
 
@@ -71,25 +115,7 @@ class _LemonadeGameState extends State<LemonadeGame> {
       case 3:
       case 4:
       case 7:
-      case 9:
-      case 16:
         _playEffect('click.mp3'); // Play click sound
-        break;
-      case 6:
-        _playEffect('cut.mp3'); // Play cut sound
-        break;
-      case 9:
-        _playEffect('squeeze.mp3'); // Play squeeze sound
-        break;
-      case 11:
-      case 13:
-        _playEffect('poure.mp3'); // Play pour sound
-        break;
-      case 15:
-        _playEffect('sugar.mp3'); // Play sugar sound
-        break;
-      case 16:
-        _playEffect('sparkle.mp3'); // Play sparkle sound
         break;
     }
   }
