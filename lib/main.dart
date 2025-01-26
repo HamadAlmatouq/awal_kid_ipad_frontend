@@ -1,3 +1,6 @@
+import 'package:awal_kid_ipad_frontend/games.dart';
+import 'package:awal_kid_ipad_frontend/pages/civil_id_signin.dart';
+import 'package:awal_kid_ipad_frontend/screens/sign_page.dart';
 import 'package:awal_kid_ipad_frontend/pages/Sign_in_page.dart';
 import 'package:awal_kid_ipad_frontend/pages/sign_page.dart';
 import 'package:awal_kid_ipad_frontend/screens/home_page.dart';
@@ -9,6 +12,9 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'NavigationBar.dart' as custom;
 import 'Header.dart';
+import 'ProfileCard.dart';
+import 'goals.dart';
+import 'TasksSection.dart';
 import 'wedgets/ProfileCard.dart';
 import 'wedgets/TasksSection.dart';
 
@@ -30,7 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GoRouter router = GoRouter(
-      initialLocation: '/sign',
+      initialLocation: '/home',
       routes: [
         GoRoute(
           path: '/signin',
