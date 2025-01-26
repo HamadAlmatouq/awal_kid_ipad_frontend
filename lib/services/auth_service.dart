@@ -12,11 +12,12 @@ class AuthService {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        print('Token received: ${response.data['token']}'); // Debug print
-        return response.data['token'];
+        final token = response.data['token'];
+        print('Token received: $token'); // Debug print
+        return token;
       }
       return null;
-    } on DioException catch (e) {
+    } on DioError catch (e) {
       print('Sign in error: ${e.message}');
       return null;
     }
