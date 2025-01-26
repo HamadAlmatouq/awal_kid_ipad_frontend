@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import '../services/client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../pages/goals.dart'; // Import the GoalsPage
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -62,12 +63,7 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       case 'Goals':
-        return const Center(
-          child: Text(
-            'Goals Page',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        );
+        return const GoalsPage(); // Use the actual GoalsPage widget
       default:
         return Column(
           children: [
