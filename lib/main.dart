@@ -8,6 +8,7 @@ import 'Header.dart';
 import 'ProfileCard.dart';
 import 'goals.dart';
 import 'TasksSection.dart';
+import 'lemonade.dart'; // Import your LemonadeGame widget.
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,11 @@ class MyApp extends StatelessWidget {
           path: '/home',
           builder: (context, state) => HomePage(),
         ),
+        GoRoute(
+          path: '/lemonade',
+          builder: (context, state) =>
+              LemonadeGame(), // Add the Lemonade Game route.
+        ),
       ],
     );
     return MaterialApp.router(
@@ -42,7 +48,6 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFFF38E22),
         fontFamily: 'Inter',
       ),
-      // home: const SignPage(),
     );
   }
 }

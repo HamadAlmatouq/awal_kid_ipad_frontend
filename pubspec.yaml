@@ -16,6 +16,7 @@ dependencies:
   jwt_decode: ^0.3.1
   shared_preferences: ^2.3.5
   provider: ^6.1.2
+  audioplayers: ^6.1.0
   confetti: ^0.7.0
 
 dev_dependencies:
@@ -28,3 +29,5 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/lemonade/
+    - assets/audio/
