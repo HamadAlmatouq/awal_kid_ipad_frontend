@@ -202,7 +202,27 @@ class _GoalsPageState extends State<GoalsPage>
                     print('Response: ${response.data}'); // Debug print
 
                     if (response.statusCode == 200) {
-                      await _fetchSavings(); // Refresh data
+                      setState(() {
+                        savings += int.parse(amountText);
+
+                        // Recalculate progress and update animation
+                        if (amount != null) {
+                          double progress = savings / amount!;
+                          int newTargetDot = (progress * totalDots).floor();
+
+                          _animation = Tween<double>(
+                            begin: avatarCurrentDot.toDouble(),
+                            end: newTargetDot.toDouble(),
+                          ).animate(CurvedAnimation(
+                            parent: _animationController,
+                            curve: Curves.easeInOut,
+                          ));
+
+                          _animationController.forward(from: 0);
+                        }
+                      });
+
+                      await _fetchSavings(); // Refresh data from server
                       Navigator.pop(context);
                     }
                   } catch (e) {
@@ -353,12 +373,13 @@ class _GoalsPageState extends State<GoalsPage>
                             Text(
                               amount != null
                                   ? '${amount!.toStringAsFixed(0)} KWD'
-                                  : 'Loading...',
+                                  : 'There are no goals',
                               style: const TextStyle(
-                                fontSize: 22, // Enlarged font size
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
+                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 5),
                             Container(
