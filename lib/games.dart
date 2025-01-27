@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'lemonade.dart'; // Replace with the actual file path of the LemonadeGame class
 
 void main() {
   runApp(MyApp());
@@ -186,6 +187,108 @@ class HeaderSection extends StatelessWidget {
   }
 }
 
+// class GameCard extends StatelessWidget {
+//   final String imageUrl;
+//   final String title;
+//   final String description;
+//   final int points;
+//   final bool isGift;
+
+//   const GameCard({
+//     Key? key,
+//     required this.imageUrl,
+//     required this.title,
+//     required this.description,
+//     required this.points,
+//     required this.isGift,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       width: 500, // Adjusted width for larger images
+//       height: 300, // Adjusted height for larger images
+//       decoration: BoxDecoration(
+//         color: Color(0xFFF7B977),
+//         borderRadius: BorderRadius.circular(20),
+//       ),
+//       child: Row(
+//         children: [
+//           Container(
+//             width: 254, // Set image width to 254
+//             height: 254, // Set image height to 254
+//             margin: EdgeInsets.all(16.0),
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.circular(20),
+//               image: DecorationImage(
+//                 image: NetworkImage(imageUrl),
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             child: Padding(
+//               padding: EdgeInsets.all(16.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Text(
+//                     title,
+//                     style: TextStyle(
+//                       fontSize: 24,
+//                       fontWeight: FontWeight.w600,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                   SizedBox(height: 4),
+//                   Text(
+//                     'Game',
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.w400,
+//                       color: Colors.white.withOpacity(0.6),
+//                     ),
+//                   ),
+//                   SizedBox(height: 4),
+//                   Text(
+//                     description,
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.w700,
+//                       color: Colors.white.withOpacity(0.6),
+//                     ),
+//                   ),
+//                   SizedBox(height: 8),
+//                   Row(
+//                     children: [
+//                       Text(
+//                         '+$points',
+//                         style: TextStyle(
+//                           fontSize: 32,
+//                           fontWeight: FontWeight.w700,
+//                           color: Colors.white,
+//                         ),
+//                       ),
+//                       if (isGift) ...[
+//                         SizedBox(width: 8),
+//                         Icon(
+//                           Icons.card_giftcard,
+//                           color: Colors.white,
+//                           size: 30,
+//                         ),
+//                       ],
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 class GameCard extends StatelessWidget {
   final String imageUrl;
   final String title;
@@ -204,86 +307,102 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 500, // Adjusted width for larger images
-      height: 300, // Adjusted height for larger images
-      decoration: BoxDecoration(
-        color: Color(0xFFF7B977),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 254, // Set image width to 254
-            height: 254, // Set image height to 254
-            margin: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
-                fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        // Navigate to LemonadeGame when the card with "Lemonade stand" is tapped
+        if (title == 'Lemonade stand') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LemonadeGame()),
+          );
+        } else {
+          // Show a message for other games
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Game "$title" is not yet implemented!')),
+          );
+        }
+      },
+      child: Container(
+        width: 500, // Adjusted width for larger images
+        height: 300, // Adjusted height for larger images
+        decoration: BoxDecoration(
+          color: Color(0xFFF7B977),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 254, // Set image width to 254
+              height: 254, // Set image height to 254
+              margin: EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Game',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white.withOpacity(0.6),
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white.withOpacity(0.6),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        '+$points',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
-                      if (isGift) ...[
-                        SizedBox(width: 8),
-                        Icon(
-                          Icons.card_giftcard,
-                          color: Colors.white,
-                          size: 30,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Game',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white.withOpacity(0.6),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white.withOpacity(0.6),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          '+$points',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
                         ),
+                        if (isGift) ...[
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.card_giftcard,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
