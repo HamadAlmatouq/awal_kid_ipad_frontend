@@ -16,13 +16,8 @@ class TasksSection extends StatefulWidget {
 }
 
 class _TasksSectionState extends State<TasksSection> {
-  List<Task> tasks = [
-    Task(title: 'Water the plants', reward: '4 KWD', duration: 3, timeLeft: 1),
-  ];
-
-  List<Task> completedTasks = [
-    Task(title: 'Fold the laundry', reward: '5 KWD'),
-  ];
+  List<Task> tasks = [];
+  List<Task> completedTasks = [];
 
   double _convertTimeToDecimal(String time) {
     final parts = time.split(' ');
@@ -41,6 +36,7 @@ class _TasksSectionState extends State<TasksSection> {
   void initState() {
     super.initState();
     _fetchTasks();
+    _fetchCompletedTasks();
   }
 
   String _formatReward(double amount) {
@@ -55,14 +51,23 @@ class _TasksSectionState extends State<TasksSection> {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
+
+        // First fetch completed tasks to use for filtering
+        await _fetchCompletedTasks();
+
         setState(() {
-          tasks.addAll(data.map((taskData) {
+          tasks.clear();
+          // Filter out tasks that are either not pending or are in completedTasks
+          tasks.addAll(data.where((taskData) {
+            bool isPending = taskData['pending'] == true;
+            bool isNotCompleted = !completedTasks.any(
+                (completedTask) => completedTask.title == taskData['title']);
+            return isPending && isNotCompleted;
+          }).map((taskData) {
             final remainingDurationStr = taskData['remainingDuration'];
             final timeLeft = remainingDurationStr != null
                 ? _convertTimeToDecimal(remainingDurationStr)
                 : 0.0;
-            print(
-                'Task: ${taskData['title']}, Remaining Duration: $remainingDurationStr, Converted: $timeLeft'); // Debug print
             return Task(
               title: taskData['title'],
               reward: _formatReward(taskData['amount'].toDouble()),
@@ -72,20 +77,35 @@ class _TasksSectionState extends State<TasksSection> {
           }).toList());
         });
       } else {
-        // Handle error
         print('Failed to load tasks: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle error
       print('Failed to load tasks: $e');
     }
   }
 
-  void _completeTask(Task task) {
-    setState(() {
-      tasks.remove(task);
-      completedTasks.add(task);
-    });
+  Future<void> _fetchCompletedTasks() async {
+    try {
+      final response = await Client.dio.get('/kid/completedtasks');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        setState(() {
+          completedTasks = data
+              .map((taskData) => Task(
+                    title: taskData['title'],
+                    reward: _formatReward(taskData['amount'].toDouble()),
+                  ))
+              .toList();
+        });
+      }
+    } catch (e) {
+      print('Failed to load completed tasks: $e');
+    }
+  }
+
+  void _completeTask(Task task) async {
+    await _fetchTasks();
+    await _fetchCompletedTasks();
   }
 
   @override
