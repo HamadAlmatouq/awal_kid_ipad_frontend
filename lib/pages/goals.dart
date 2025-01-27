@@ -18,7 +18,7 @@ class _GoalsPageState extends State<GoalsPage>
   late AnimationController _animationController;
   late Animation<double> _animation;
   late ConfettiController _confettiController; // Confetti animation controller
-  int totalDots = 20; // Total number of dots
+  int totalDots = 19; // Total number of dots
   double savings = 0.0; // Initialize savings
   double amount = 0.0; // Target savings amount from goals
   List<bool> isReached = []; // Tracks whether each dot has been reached
@@ -103,17 +103,20 @@ class _GoalsPageState extends State<GoalsPage>
   }
 
   void _initializeAnimation() {
-    if (totalDots <= 0 || amount <= 0)
-      return; // Ensure totalDots and amount are not zero or negative
+    if (totalDots <= 0 || amount <= 0) return;
 
-    // Initialize dots as unreached
     isReached = List.generate(totalDots, (index) => false);
 
-    // Calculate progress on page load
-    double progress = savings / amount;
-    int avatarTargetDot = (progress * totalDots).floor();
+    // Calculate progress and clamp it to maximum of 1.0
+    double progress = (savings / amount).clamp(0.0, 1.0);
 
-    // Set up animation to move avatar to calculated target on page load
+    // Reduce target dot by 1 to ensure avatar stops before last dot
+    int maxDot = totalDots - 2; // Leave space for 2 dots before goal
+    int avatarTargetDot = (progress * maxDot).floor();
+
+    // Ensure target dot doesn't exceed maximum
+    avatarTargetDot = avatarTargetDot.clamp(0, maxDot);
+
     _animation = Tween<double>(begin: 0, end: avatarTargetDot.toDouble())
         .animate(CurvedAnimation(
             parent: _animationController, curve: Curves.easeInOut))
@@ -252,8 +255,12 @@ class _GoalsPageState extends State<GoalsPage>
                       // Handle animation separately
                       if (amount > 0) {
                         await Future.microtask(() {
-                          double progress = newSavings / amount;
-                          int newTargetDot = (progress * totalDots).floor();
+                          double progress =
+                              (newSavings / amount).clamp(0.0, 1.0);
+                          // Use same maxDot calculation as in _initializeAnimation
+                          int maxDot = totalDots - 2;
+                          int newTargetDot = (progress * maxDot).floor();
+                          newTargetDot = newTargetDot.clamp(0, maxDot);
 
                           _animation = Tween<double>(
                             begin: avatarCurrentDot.toDouble(),
@@ -324,13 +331,16 @@ class _GoalsPageState extends State<GoalsPage>
     final screenHeight = MediaQuery.of(context).size.height;
 
     // Define positions for the previous goal and the secret goal
-    final previousGoalPosition = Offset(100, screenHeight * 0.3);
-    final secretGoalPosition = Offset(screenWidth - 250, screenHeight * 0.3);
+    final previousGoalPosition =
+        Offset(150, screenHeight * 0.3); // Increased from 100 to 150
+    // Move secret goal position slightly right to create space
+    final secretGoalPosition = Offset(screenWidth - 200, screenHeight * 0.3);
 
-    // Calculate spacing between dots
-    final dx = totalDots > 0
-        ? (secretGoalPosition.dx - previousGoalPosition.dx) / totalDots
-        : 0.0;
+    // Adjust dot spacing to leave room before secret goal
+    final availableWidth = secretGoalPosition.dx -
+        previousGoalPosition.dx -
+        200; // Decreased from 250 to 200 to bring dots closer to goal
+    final dx = totalDots > 0 ? availableWidth / totalDots : 0.0;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -341,52 +351,54 @@ class _GoalsPageState extends State<GoalsPage>
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 30.0), // Increased padding
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: 30), // Increased spacing
                 Row(
                   children: [
                     const Text(
                       'Goals',
                       style: TextStyle(
-                        fontSize: 36, // Enlarged font size
+                        fontSize: 48, // Increased from 36
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 15), // Increased spacing
                     Icon(
                       Icons.flag,
                       color: Colors.white,
-                      size: 28,
+                      size: 40, // Increased from 28
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 15), // Increased spacing
                 const Text(
                   'Increase your savings to reach your goals',
                   style: TextStyle(
-                    fontSize: 20, // Enlarged font size
+                    fontSize: 26, // Increased from 20
                     fontWeight: FontWeight.w400,
                     color: Colors.white70,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30), // Increased spacing
                 Expanded(
                   child: Stack(
                     children: [
                       // Achieved goal (left)
                       Positioned(
-                        left: previousGoalPosition.dx - 75,
+                        left: previousGoalPosition.dx -
+                            150, // Adjusted to move card more to the left
                         top: previousGoalPosition.dy - 125,
                         child: Column(
                           children: [
                             Image.asset(
                               'assets/images/card.png',
-                              width: 150,
-                              height: 150,
+                              width: 200, // Increased from 150
+                              height: 200, // Increased from 150
                             ),
                             const SizedBox(height: 5),
                             const Text(
@@ -402,8 +414,9 @@ class _GoalsPageState extends State<GoalsPage>
                       // Dots along the wiggly line
                       if (totalDots > 0)
                         ...List.generate(totalDots, (index) {
-                          final xPosition =
-                              previousGoalPosition.dx + index * dx + 60;
+                          final xPosition = previousGoalPosition.dx +
+                              index * dx +
+                              100; // Increased from 60 to 100
                           final yPosition = previousGoalPosition.dy +
                               20 * sin(index * pi / 3);
 
@@ -413,7 +426,7 @@ class _GoalsPageState extends State<GoalsPage>
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
                               child: CircleAvatar(
-                                radius: 6,
+                                radius: 8, // Increased dot size from 6
                                 backgroundColor:
                                     isReached.isNotEmpty && isReached[index]
                                         ? Colors.white
@@ -447,11 +460,12 @@ class _GoalsPageState extends State<GoalsPage>
                             ),
                             const SizedBox(height: 5),
                             Container(
-                              width: 150,
-                              height: 150,
+                              width: 200, // Increased from 150
+                              height: 200, // Increased from 150
                               decoration: BoxDecoration(
                                 color: showSecretGoal
-                                    ? Colors.orange
+                                    ? Colors
+                                        .transparent // Changed from Colors.orange to transparent
                                     : Colors.grey[400],
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -531,15 +545,15 @@ class _GoalsPageState extends State<GoalsPage>
                             child: Column(
                               children: [
                                 CircleAvatar(
-                                  radius: 60,
+                                  radius: 80, // Increased from 60
                                   backgroundImage: const AssetImage(
                                       'assets/images/avatar.png'),
                                 ),
-                                const SizedBox(height: 5),
+                                const SizedBox(height: 10), // Increased spacing
                                 Text(
                                   'Savings',
                                   style: const TextStyle(
-                                    fontSize: 20, // Enlarged font size
+                                    fontSize: 26, // Increased from 20
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -547,7 +561,7 @@ class _GoalsPageState extends State<GoalsPage>
                                 Text(
                                   '${savings.toStringAsFixed(3)} KWD',
                                   style: const TextStyle(
-                                    fontSize: 22, // Enlarged font size
+                                    fontSize: 28, // Increased from 22
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -556,11 +570,14 @@ class _GoalsPageState extends State<GoalsPage>
                                   onPressed: _showAddToSavingsDialog,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.orange,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30,
+                                        vertical: 15), // Added padding
                                   ),
                                   child: const Text(
                                     '+ Add To Savings',
                                     style: TextStyle(
-                                        fontSize: 18), // Enlarged font
+                                        fontSize: 24), // Increased from 18
                                   ),
                                 ),
                               ],
@@ -582,11 +599,11 @@ class _GoalsPageState extends State<GoalsPage>
               right: 0,
               child: Container(
                 color: Colors.orange,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(24), // Increased from 16
                 child: const Text(
                   '🎉 Goal Reached! Congratulations! 🎉',
                   style: TextStyle(
-                    fontSize: 24, // Enlarged font size
+                    fontSize: 32, // Increased from 24
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
