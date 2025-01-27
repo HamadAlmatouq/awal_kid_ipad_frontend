@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:confetti/confetti.dart';
 import '../services/client.dart';
+import 'dart:convert'; // Add this import at the top
+import 'dart:typed_data'; // Add this import
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({Key? key}) : super(key: key);
@@ -18,12 +20,14 @@ class _GoalsPageState extends State<GoalsPage>
   late ConfettiController _confettiController; // Confetti animation controller
   int totalDots = 20; // Total number of dots
   double savings = 0.0; // Initialize savings
-  double? amount; // Change to nullable double for loading state
+  double amount = 0.0; // Target savings amount from goals
   List<bool> isReached = []; // Tracks whether each dot has been reached
   int avatarCurrentDot = 0; // Tracks the current dot of the avatar
   bool goalReached = false; // Prevents multiple triggers
   bool showBanner = false; // Controls the visibility of the celebration banner
   bool showSecretGoal = false; // Controls the visibility of the secret goal
+  String? goalImage; // Add this to class variables at the top
+  Uint8List? _cachedImage; // Add this variable
 
   @override
   void initState() {
@@ -50,6 +54,7 @@ class _GoalsPageState extends State<GoalsPage>
         });
         await _fetchGoals();
         _initializeAnimation();
+        _checkGoalReached(); // Check if goal is reached after fetching data
       }
     } catch (e) {
       print('Error fetching savings: $e');
@@ -60,62 +65,52 @@ class _GoalsPageState extends State<GoalsPage>
     try {
       final response = await Client.dio.get('/kid/goals');
       if (response.statusCode == 200 && response.data != null) {
-        print('Raw response data: ${response.data}'); // Debug print
-
-        // The response.data is already a List, so we can use it directly
-        final List<dynamic> goals = List<dynamic>.from(response.data);
-
-        print('Processed goals: $goals'); // Debug print
+        final goals = List<Map<String, dynamic>>.from(response.data);
+        print('Goals data: $goals'); // Debug print
 
         if (goals.isNotEmpty) {
-          // Find the next goal with amount greater than current savings
+          Map<String, dynamic>? nextGoal;
           for (var goal in goals) {
-            if (goal is Map<String, dynamic> && goal.containsKey('amount')) {
-              final goalAmount =
-                  double.tryParse(goal['amount'].toString()) ?? 0.0;
-              if (goalAmount > savings) {
-                setState(() {
-                  amount = goalAmount;
-                  print('Setting amount to: $goalAmount'); // Debug print
-                });
-                return;
-              }
+            final goalAmount =
+                double.tryParse(goal['amount'].toString()) ?? 0.0;
+            if (goalAmount > savings) {
+              nextGoal = goal;
+              break;
             }
           }
 
-          // If no goal is greater than savings, use the largest amount
-          if (amount == null) {
-            final largestGoal = goals.reduce((curr, next) {
-              final currAmount =
-                  double.tryParse(curr['amount'].toString()) ?? 0.0;
-              final nextAmount =
-                  double.tryParse(next['amount'].toString()) ?? 0.0;
-              return currAmount > nextAmount ? curr : next;
-            });
-            setState(() {
-              amount = double.tryParse(largestGoal['amount'].toString()) ?? 0.0;
-              print('Setting to largest amount: $amount'); // Debug print
-            });
-          }
+          setState(() {
+            if (nextGoal != null) {
+              amount = double.tryParse(nextGoal['amount'].toString()) ?? 0.0;
+              goalImage = nextGoal['image']?.toString();
+              print('Next goal - amount: $amount, image: $goalImage');
+            } else {
+              final lastGoal = goals.last;
+              amount = double.tryParse(lastGoal['amount'].toString()) ?? 0.0;
+              goalImage = lastGoal['image']?.toString();
+              print('Last goal - amount: $amount, image: $goalImage');
+            }
+          });
         }
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('Error fetching goals: $e');
-      print('Stack trace: $stackTrace');
       setState(() {
         amount = 0.0;
+        goalImage = null;
       });
     }
   }
 
   void _initializeAnimation() {
-    if (totalDots <= 0 || amount == null || amount! <= 0) return;
+    if (totalDots <= 0 || amount <= 0)
+      return; // Ensure totalDots and amount are not zero or negative
 
     // Initialize dots as unreached
     isReached = List.generate(totalDots, (index) => false);
 
     // Calculate progress on page load
-    double progress = savings / amount!;
+    double progress = savings / amount;
     int avatarTargetDot = (progress * totalDots).floor();
 
     // Set up animation to move avatar to calculated target on page load
@@ -133,7 +128,7 @@ class _GoalsPageState extends State<GoalsPage>
           avatarCurrentDot = _animation.value.toInt(); // Update current dot
 
           // Trigger celebration when goal is reached (only once)
-          if (savings >= amount! && !goalReached) {
+          if (savings >= amount && !goalReached) {
             goalReached = true; // Mark goal as reached
             _showCelebration();
           }
@@ -151,19 +146,66 @@ class _GoalsPageState extends State<GoalsPage>
   }
 
   void _showCelebration() {
-    setState(() {
-      showBanner = true; // Show the banner
-      showSecretGoal = true; // Show the secret goal
-    });
-
-    _confettiController.play(); // Start confetti animation
-
-    // Hide the banner after 3 seconds
-    Future.delayed(const Duration(seconds: 5), () {
+    if (mounted) {
       setState(() {
-        showBanner = false; // Hide the banner
+        showBanner = true;
+        showSecretGoal = true;
+        print(
+            'Showing celebration, savings: $savings, goal: $amount'); // Debug print
       });
-    });
+
+      _confettiController.play();
+
+      // Hide the banner after delay
+      Future.delayed(const Duration(seconds: 5), () {
+        if (mounted) {
+          setState(() {
+            showBanner = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _checkGoalReached() {
+    if (!goalReached && savings >= amount && amount > 0) {
+      print('Goal reached! Savings: $savings, Goal: $amount'); // Debug print
+      goalReached = true;
+      _showCelebration();
+    }
+  }
+
+  Future<void> _handleCelebration() async {
+    try {
+      if (!goalReached && mounted) {
+        // Update state first
+        setState(() {
+          goalReached = true;
+          showSecretGoal = true;
+        });
+
+        // Play confetti after state update
+        await Future.microtask(() => _confettiController.play());
+
+        // Show banner after small delay
+        await Future.delayed(const Duration(milliseconds: 100));
+        if (mounted) {
+          setState(() {
+            showBanner = true;
+          });
+        }
+
+        // Hide banner after delay
+        await Future.delayed(const Duration(seconds: 3));
+        if (mounted) {
+          setState(() {
+            showBanner = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error in celebration: $e');
+    }
   }
 
   void _showAddToSavingsDialog() {
@@ -191,23 +233,26 @@ class _GoalsPageState extends State<GoalsPage>
                 final amountText = controller.text.trim();
                 if (amountText.isNotEmpty) {
                   try {
-                    print('Sending amount: $amountText'); // Debug print
+                    Navigator.pop(context); // Close dialog first
+
                     final response = await Client.dio.post(
                       '/kid/convertBalanceToSavings',
                       data: {
-                        'amount': int.parse(amountText)
-                      }, // Convert to integer
+                        'amount': int.parse(amountText),
+                      },
                     );
 
-                    print('Response: ${response.data}'); // Debug print
-
-                    if (response.statusCode == 200) {
+                    if (response.statusCode == 200 && mounted) {
+                      // Update local state
+                      final newSavings = savings + int.parse(amountText);
                       setState(() {
-                        savings += int.parse(amountText);
+                        savings = newSavings;
+                      });
 
-                        // Recalculate progress and update animation
-                        if (amount != null) {
-                          double progress = savings / amount!;
+                      // Handle animation separately
+                      if (amount > 0) {
+                        await Future.microtask(() {
+                          double progress = newSavings / amount;
                           int newTargetDot = (progress * totalDots).floor();
 
                           _animation = Tween<double>(
@@ -219,28 +264,29 @@ class _GoalsPageState extends State<GoalsPage>
                           ));
 
                           _animationController.forward(from: 0);
-                        }
-                      });
+                        });
+                      }
 
-                      await _fetchSavings(); // Refresh data from server
-                      Navigator.pop(context);
+                      // Check goal completion after animation starts
+                      if (newSavings >= amount) {
+                        await _handleCelebration();
+                      }
+
+                      // Refresh data at the end
+                      await _fetchSavings();
                     }
                   } catch (e) {
-                    print('Error converting balance to savings: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error: ${e.toString()}'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    print('Error converting balance: $e');
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Failed to convert balance: ${e.toString()}'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter an amount'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
                 }
               },
               child: const Text('Add'),
@@ -249,6 +295,27 @@ class _GoalsPageState extends State<GoalsPage>
         );
       },
     );
+  }
+
+  Uint8List? _getDecodedImage() {
+    if (_cachedImage != null) return _cachedImage;
+    if (goalImage == null) return null;
+
+    try {
+      _cachedImage = base64Decode(goalImage!);
+      return _cachedImage;
+    } catch (e) {
+      print('Error decoding image: $e');
+      return null;
+    }
+  }
+
+  @override
+  void didUpdateWidget(GoalsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (goalImage != null) {
+      _cachedImage = null;
+    }
   }
 
   @override
@@ -371,15 +438,12 @@ class _GoalsPageState extends State<GoalsPage>
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              amount != null
-                                  ? '${amount!.toStringAsFixed(0)} KWD'
-                                  : 'There are no goals',
+                              '${amount.toStringAsFixed(0)} KWD',
                               style: const TextStyle(
-                                fontSize: 22,
+                                fontSize: 22, // Enlarged font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 5),
                             Container(
@@ -393,15 +457,55 @@ class _GoalsPageState extends State<GoalsPage>
                               ),
                               child: Center(
                                 child: showSecretGoal
-                                    ? Image.asset(
-                                        'assets/images/secret_goal.png',
-                                        width: 150,
-                                        height: 150,
-                                      )
+                                    ? (goalImage != null
+                                        ? FutureBuilder<Uint8List?>(
+                                            future: Future(
+                                                () => _getDecodedImage()),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                      ConnectionState.waiting ||
+                                                  snapshot.data == null) {
+                                                return Container(
+                                                  width: 150,
+                                                  height: 150,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey[400],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  child: const Center(
+                                                    child: Text(
+                                                      '?',
+                                                      style: TextStyle(
+                                                        fontSize: 50,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                              return ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: Image.memory(
+                                                  snapshot.data!,
+                                                  width: 150,
+                                                  height: 150,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        : const Icon(
+                                            Icons.image_not_supported,
+                                            size: 50,
+                                            color: Colors.white,
+                                          ))
                                     : const Text(
                                         '?',
                                         style: TextStyle(
-                                          fontSize: 50, // Enlarged font size
+                                          fontSize: 50,
                                           color: Colors.white,
                                         ),
                                       ),
