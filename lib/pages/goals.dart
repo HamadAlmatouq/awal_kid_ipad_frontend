@@ -18,7 +18,7 @@ class _GoalsPageState extends State<GoalsPage>
   late AnimationController _animationController;
   late Animation<double> _animation;
   late ConfettiController _confettiController; // Confetti animation controller
-  int totalDots = 19; // Total number of dots
+  int totalDots = 19; // Reduced from 20 to 19 for better spacing
   double savings = 0.0; // Initialize savings
   double amount = 0.0; // Target savings amount from goals
   List<bool> isReached = []; // Tracks whether each dot has been reached
@@ -110,8 +110,8 @@ class _GoalsPageState extends State<GoalsPage>
     // Calculate progress and clamp it to maximum of 1.0
     double progress = (savings / amount).clamp(0.0, 1.0);
 
-    // Reduce target dot by 1 to ensure avatar stops before last dot
-    int maxDot = totalDots - 2; // Leave space for 2 dots before goal
+    // Reduce target dot by 3 to ensure avatar stops further from goal
+    int maxDot = totalDots - 3; // Changed from -2 to -3 to stop one dot earlier
     int avatarTargetDot = (progress * maxDot).floor();
 
     // Ensure target dot doesn't exceed maximum
@@ -217,88 +217,165 @@ class _GoalsPageState extends State<GoalsPage>
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Add to Savings'),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              hintText: 'Enter amount to add',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final amountText = controller.text.trim();
-                if (amountText.isNotEmpty) {
-                  try {
-                    Navigator.pop(context); // Close dialog first
-
-                    final response = await Client.dio.post(
-                      '/kid/convertBalanceToSavings',
-                      data: {
-                        'amount': int.parse(amountText),
-                      },
-                    );
-
-                    if (response.statusCode == 200 && mounted) {
-                      // Update local state
-                      final newSavings = savings + int.parse(amountText);
-                      setState(() {
-                        savings = newSavings;
-                      });
-
-                      // Handle animation separately
-                      if (amount > 0) {
-                        await Future.microtask(() {
-                          double progress =
-                              (newSavings / amount).clamp(0.0, 1.0);
-                          // Use same maxDot calculation as in _initializeAnimation
-                          int maxDot = totalDots - 2;
-                          int newTargetDot = (progress * maxDot).floor();
-                          newTargetDot = newTargetDot.clamp(0, maxDot);
-
-                          _animation = Tween<double>(
-                            begin: avatarCurrentDot.toDouble(),
-                            end: newTargetDot.toDouble(),
-                          ).animate(CurvedAnimation(
-                            parent: _animationController,
-                            curve: Curves.easeInOut,
-                          ));
-
-                          _animationController.forward(from: 0);
-                        });
-                      }
-
-                      // Check goal completion after animation starts
-                      if (newSavings >= amount) {
-                        await _handleCelebration();
-                      }
-
-                      // Refresh data at the end
-                      await _fetchSavings();
-                    }
-                  } catch (e) {
-                    print('Error converting balance: $e');
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              'Failed to convert balance: ${e.toString()}'),
-                          backgroundColor: Colors.red,
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                constraints: const BoxConstraints(maxWidth: 500),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        'Add to Savings',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFF38E22),
                         ),
-                      );
-                    }
-                  }
-                }
-              },
-              child: const Text('Add'),
-            ),
-          ],
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Divider(color: const Color(0xFFF5A147).withOpacity(0.4)),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextField(
+                        controller: controller,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          color: Color(0xFFF38E22),
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Enter amount to add',
+                          hintStyle: TextStyle(
+                            color: Color(0xFFF38E22).withOpacity(0.5),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFF38E22).withOpacity(0.4),
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFF38E22),
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: InkWell(
+                        onTap: () async {
+                          final amountText = controller.text.trim();
+                          if (amountText.isNotEmpty) {
+                            try {
+                              Navigator.pop(context);
+                              final response = await Client.dio.post(
+                                '/kid/convertBalanceToSavings',
+                                data: {'amount': int.parse(amountText)},
+                              );
+                              if (response.statusCode == 200 && mounted) {
+                                final newSavings =
+                                    savings + int.parse(amountText);
+                                setState(() {
+                                  savings = newSavings;
+                                });
+
+                                if (amount > 0) {
+                                  await Future.microtask(() {
+                                    double progress =
+                                        (newSavings / amount).clamp(0.0, 1.0);
+                                    int maxDot = totalDots -
+                                        3; // Use same logic as _initializeAnimation
+                                    int newTargetDot =
+                                        (progress * maxDot).floor();
+                                    newTargetDot =
+                                        newTargetDot.clamp(0, maxDot);
+
+                                    _animation = Tween<double>(
+                                      begin: avatarCurrentDot.toDouble(),
+                                      end: newTargetDot.toDouble(),
+                                    ).animate(CurvedAnimation(
+                                      parent: _animationController,
+                                      curve: Curves.easeInOut,
+                                    ));
+
+                                    _animationController.forward(from: 0);
+                                  });
+                                }
+
+                                if (newSavings >= amount) {
+                                  await _handleCelebration();
+                                }
+
+                                await _fetchSavings();
+                              }
+                            } catch (e) {
+                              print('Error converting balance: $e');
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Failed to convert balance: ${e.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFFF38E22),
+                                Color(0xFFF5A147),
+                                Color(0xFFF6AE60),
+                                Color(0xFFF49734),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Add',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: const Icon(Icons.close, color: Colors.black),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -362,24 +439,24 @@ class _GoalsPageState extends State<GoalsPage>
                     const Text(
                       'Goals',
                       style: TextStyle(
-                        fontSize: 48, // Increased from 36
+                        fontSize: 64, // Increased from 48
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 15), // Increased spacing
+                    const SizedBox(width: 15),
                     Icon(
                       Icons.flag,
                       color: Colors.white,
-                      size: 40, // Increased from 28
+                      size: 50, // Increased to match new text size
                     ),
                   ],
                 ),
-                const SizedBox(height: 15), // Increased spacing
+                const SizedBox(height: 15),
                 const Text(
                   'Increase your savings to reach your goals',
                   style: TextStyle(
-                    fontSize: 26, // Increased from 20
+                    fontSize: 32, // Increased from 26
                     fontWeight: FontWeight.w400,
                     color: Colors.white70,
                   ),
@@ -569,15 +646,17 @@ class _GoalsPageState extends State<GoalsPage>
                                 ElevatedButton(
                                   onPressed: _showAddToSavingsDialog,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
+                                    backgroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 30,
-                                        vertical: 15), // Added padding
+                                        horizontal: 30, vertical: 15),
                                   ),
                                   child: const Text(
                                     '+ Add To Savings',
                                     style: TextStyle(
-                                        fontSize: 24), // Increased from 18
+                                      fontSize: 24,
+                                      color: Color(
+                                          0xFFF38E22), // Changed to orange
+                                    ),
                                   ),
                                 ),
                               ],
