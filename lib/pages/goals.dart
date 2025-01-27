@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:confetti/confetti.dart';
+import '../services/client.dart';
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({Key? key}) : super(key: key);
@@ -15,34 +17,108 @@ class _GoalsPageState extends State<GoalsPage>
   late Animation<double> _animation;
   late ConfettiController _confettiController; // Confetti animation controller
   int totalDots = 20; // Total number of dots
-  double userSavings = 33.87; // Current savings (dummy data)
-  final double maxSavings = 55.0; // Target savings (dummy data)
+  double savings = 0.0; // Initialize savings
+  double? amount; // Change to nullable double for loading state
   List<bool> isReached = []; // Tracks whether each dot has been reached
   int avatarCurrentDot = 0; // Tracks the current dot of the avatar
   bool goalReached = false; // Prevents multiple triggers
   bool showBanner = false; // Controls the visibility of the celebration banner
+  bool showSecretGoal = false; // Controls the visibility of the secret goal
 
   @override
   void initState() {
     super.initState();
-
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5), // Smooth animation duration
+    );
+    _animation = Tween<double>(begin: 0, end: 0).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _fetchSavings();
     // Initialize ConfettiController
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 3));
+  }
+
+  Future<void> _fetchSavings() async {
+    try {
+      final response = await Client.dio.get('/kid/info');
+      if (response.statusCode == 200 && response.data != null) {
+        setState(() {
+          savings = (response.data['savings'] as num).toDouble();
+          print('Fetched savings: $savings'); // Debug print
+        });
+        await _fetchGoals();
+        _initializeAnimation();
+      }
+    } catch (e) {
+      print('Error fetching savings: $e');
+    }
+  }
+
+  Future<void> _fetchGoals() async {
+    try {
+      final response = await Client.dio.get('/kid/goals');
+      if (response.statusCode == 200 && response.data != null) {
+        print('Raw response data: ${response.data}'); // Debug print
+
+        // The response.data is already a List, so we can use it directly
+        final List<dynamic> goals = List<dynamic>.from(response.data);
+
+        print('Processed goals: $goals'); // Debug print
+
+        if (goals.isNotEmpty) {
+          // Find the next goal with amount greater than current savings
+          for (var goal in goals) {
+            if (goal is Map<String, dynamic> && goal.containsKey('amount')) {
+              final goalAmount =
+                  double.tryParse(goal['amount'].toString()) ?? 0.0;
+              if (goalAmount > savings) {
+                setState(() {
+                  amount = goalAmount;
+                  print('Setting amount to: $goalAmount'); // Debug print
+                });
+                return;
+              }
+            }
+          }
+
+          // If no goal is greater than savings, use the largest amount
+          if (amount == null) {
+            final largestGoal = goals.reduce((curr, next) {
+              final currAmount =
+                  double.tryParse(curr['amount'].toString()) ?? 0.0;
+              final nextAmount =
+                  double.tryParse(next['amount'].toString()) ?? 0.0;
+              return currAmount > nextAmount ? curr : next;
+            });
+            setState(() {
+              amount = double.tryParse(largestGoal['amount'].toString()) ?? 0.0;
+              print('Setting to largest amount: $amount'); // Debug print
+            });
+          }
+        }
+      }
+    } catch (e, stackTrace) {
+      print('Error fetching goals: $e');
+      print('Stack trace: $stackTrace');
+      setState(() {
+        amount = 0.0;
+      });
+    }
+  }
+
+  void _initializeAnimation() {
+    if (totalDots <= 0 || amount == null || amount! <= 0) return;
 
     // Initialize dots as unreached
     isReached = List.generate(totalDots, (index) => false);
 
     // Calculate progress on page load
-    double progress = userSavings / maxSavings;
+    double progress = savings / amount!;
     int avatarTargetDot = (progress * totalDots).floor();
 
     // Set up animation to move avatar to calculated target on page load
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5), // Smooth animation duration
-    );
-
     _animation = Tween<double>(begin: 0, end: avatarTargetDot.toDouble())
         .animate(CurvedAnimation(
             parent: _animationController, curve: Curves.easeInOut))
@@ -50,14 +126,14 @@ class _GoalsPageState extends State<GoalsPage>
         setState(() {
           // Update dots dynamically as avatar moves
           for (int i = 0; i < totalDots; i++) {
-            if (_animation.value >= i) {
+            if (_animation.value >= i && i < isReached.length) {
               isReached[i] = true;
             }
           }
           avatarCurrentDot = _animation.value.toInt(); // Update current dot
 
           // Trigger celebration when goal is reached (only once)
-          if (userSavings >= maxSavings && !goalReached) {
+          if (savings >= amount! && !goalReached) {
             goalReached = true; // Mark goal as reached
             _showCelebration();
           }
@@ -77,6 +153,7 @@ class _GoalsPageState extends State<GoalsPage>
   void _showCelebration() {
     setState(() {
       showBanner = true; // Show the banner
+      showSecretGoal = true; // Show the secret goal
     });
 
     _confettiController.play(); // Start confetti animation
@@ -106,51 +183,45 @@ class _GoalsPageState extends State<GoalsPage>
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                final double? amount = double.tryParse(controller.text);
-                if (amount != null) {
-                  setState(() {
-                    userSavings += amount;
+              onPressed: () async {
+                final amountText = controller.text.trim();
+                if (amountText.isNotEmpty) {
+                  try {
+                    print('Sending amount: $amountText'); // Debug print
+                    final response = await Client.dio.post(
+                      '/kid/convertBalanceToSavings',
+                      data: {
+                        'amount': int.parse(amountText)
+                      }, // Convert to integer
+                    );
 
-                    // Recalculate progress
-                    double progress = userSavings / maxSavings;
-                    int newTargetDot = (progress * totalDots).floor();
+                    print('Response: ${response.data}'); // Debug print
 
-                    // Animate from current dot to new target
-                    _animation = Tween<double>(
-                      begin: avatarCurrentDot.toDouble(),
-                      end: newTargetDot.toDouble(),
-                    ).animate(CurvedAnimation(
-                        parent: _animationController, curve: Curves.easeInOut))
-                      ..addListener(() {
-                        setState(() {
-                          // Update dots dynamically
-                          for (int i = 0; i < totalDots; i++) {
-                            if (_animation.value >= i) {
-                              isReached[i] = true;
-                            }
-                          }
-                          avatarCurrentDot = _animation.value.toInt();
-                        });
-                      });
-
-                    // Restart animation
-                    _animationController.forward(from: 0);
-
-                    // Trigger celebration if goal is reached
-                    if (userSavings >= maxSavings && !goalReached) {
-                      goalReached = true;
-                      _showCelebration();
+                    if (response.statusCode == 200) {
+                      await _fetchSavings(); // Refresh data
+                      Navigator.pop(context);
                     }
-                  });
+                  } catch (e) {
+                    print('Error converting balance to savings: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter an amount'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
-                Navigator.pop(context);
               },
               child: const Text('Add'),
             ),
@@ -170,7 +241,9 @@ class _GoalsPageState extends State<GoalsPage>
     final secretGoalPosition = Offset(screenWidth - 250, screenHeight * 0.3);
 
     // Calculate spacing between dots
-    final dx = (secretGoalPosition.dx - previousGoalPosition.dx) / totalDots;
+    final dx = totalDots > 0
+        ? (secretGoalPosition.dx - previousGoalPosition.dx) / totalDots
+        : 0.0;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -240,25 +313,28 @@ class _GoalsPageState extends State<GoalsPage>
                         ),
                       ),
                       // Dots along the wiggly line
-                      ...List.generate(totalDots, (index) {
-                        final xPosition =
-                            previousGoalPosition.dx + index * dx + 60;
-                        final yPosition =
-                            previousGoalPosition.dy + 20 * sin(index * pi / 3);
+                      if (totalDots > 0)
+                        ...List.generate(totalDots, (index) {
+                          final xPosition =
+                              previousGoalPosition.dx + index * dx + 60;
+                          final yPosition = previousGoalPosition.dy +
+                              20 * sin(index * pi / 3);
 
-                        return Positioned(
-                          left: xPosition,
-                          top: yPosition,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            child: CircleAvatar(
-                              radius: 6,
-                              backgroundColor:
-                                  isReached[index] ? Colors.white : Colors.grey,
+                          return Positioned(
+                            left: xPosition,
+                            top: yPosition,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              child: CircleAvatar(
+                                radius: 6,
+                                backgroundColor:
+                                    isReached.isNotEmpty && isReached[index]
+                                        ? Colors.white
+                                        : Colors.grey,
+                              ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        }),
                       // Secret goal (right)
                       Positioned(
                         left: secretGoalPosition.dx - 75,
@@ -275,7 +351,9 @@ class _GoalsPageState extends State<GoalsPage>
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              '${maxSavings.toStringAsFixed(0)} KWD',
+                              amount != null
+                                  ? '${amount!.toStringAsFixed(0)} KWD'
+                                  : 'Loading...',
                               style: const TextStyle(
                                 fontSize: 22, // Enlarged font size
                                 fontWeight: FontWeight.bold,
@@ -287,17 +365,25 @@ class _GoalsPageState extends State<GoalsPage>
                               width: 150,
                               height: 150,
                               decoration: BoxDecoration(
-                                color: Colors.grey[400],
+                                color: showSecretGoal
+                                    ? Colors.orange
+                                    : Colors.grey[400],
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Center(
-                                child: Text(
-                                  '?',
-                                  style: TextStyle(
-                                    fontSize: 50, // Enlarged font size
-                                    color: Colors.white,
-                                  ),
-                                ),
+                              child: Center(
+                                child: showSecretGoal
+                                    ? Image.asset(
+                                        'assets/images/secret_goal.png',
+                                        width: 150,
+                                        height: 150,
+                                      )
+                                    : const Text(
+                                        '?',
+                                        style: TextStyle(
+                                          fontSize: 50, // Enlarged font size
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
                             ),
                           ],
@@ -334,7 +420,7 @@ class _GoalsPageState extends State<GoalsPage>
                                   ),
                                 ),
                                 Text(
-                                  '${userSavings.toStringAsFixed(3)} KWD',
+                                  '${savings.toStringAsFixed(3)} KWD',
                                   style: const TextStyle(
                                     fontSize: 22, // Enlarged font size
                                     fontWeight: FontWeight.bold,
