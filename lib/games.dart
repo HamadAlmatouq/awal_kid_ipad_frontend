@@ -41,7 +41,7 @@ class GamesPage extends StatelessWidget {
       'description':
           'this is a game description which is about finding treasures',
       'points': 75,
-      'isGift': true, // Added gift icon to the third game
+      'isGift': true,
     },
   ];
 
@@ -52,7 +52,6 @@ class GamesPage extends StatelessWidget {
         color: Color(0xFFF7B14C), // Set the background color to #F7B14C
         child: Column(
           children: [
-            EasterEggIcon(), // Add Easter egg icon at the top center
             HeaderSection(),
             Padding(
               padding: EdgeInsets.only(left: 16.0, top: 16.0),
@@ -128,7 +127,7 @@ class HeaderSection extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Image.network(
-                  'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png', // Replace with your game holder asset URL
+                  'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png',
                   width: 26,
                   height: 26,
                   color: Colors.white,
@@ -177,8 +176,6 @@ class HeaderSection extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: 16.0),
-              EasterEggIcon(), // Add Easter egg icon next to the points
             ],
           ),
         ],
@@ -207,22 +204,20 @@ class GameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to LemonadeGame when the card with "Lemonade stand" is tapped
         if (title == 'Lemonade stand') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => LemonadeGame()),
           );
         } else {
-          // Show a message for other games
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Game "$title" is not yet implemented!')),
           );
         }
       },
       child: Container(
-        width: 500, // Adjusted width for larger images
-        height: 300, // Adjusted height for larger images
+        width: 500,
+        height: 300,
         decoration: BoxDecoration(
           color: Color(0xFFF7B977),
           borderRadius: BorderRadius.circular(20),
@@ -230,8 +225,8 @@ class GameCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 254, // Set image width to 254
-              height: 254, // Set image height to 254
+              width: 254,
+              height: 254,
               margin: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -356,7 +351,7 @@ class UsePointsSection extends StatelessWidget {
             ),
           ),
           Container(
-            height: 200, // Adjusted height for point cards
+            height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -402,8 +397,8 @@ class UsePointsSection extends StatelessWidget {
     required String points,
   }) {
     return Container(
-      width: 300, // Adjusted width for point cards
-      height: 200, // Adjusted height for point cards
+      width: 300,
+      height: 200,
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.25),
         borderRadius: BorderRadius.circular(20),
@@ -416,8 +411,8 @@ class UsePointsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
                   image,
-                  width: 150, // Adjusted image width
-                  height: 200, // Adjusted image height
+                  width: 150,
+                  height: 200,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -430,15 +425,15 @@ class UsePointsSection extends StatelessWidget {
                     children: [
                       Image.network(
                         logo,
-                        width: 100, // Adjusted logo width
-                        height: 50, // Adjusted logo height
+                        width: 100,
+                        height: 50,
                         fit: BoxFit.contain,
                       ),
                       SizedBox(height: 4),
                       Text(
                         'Enjoy a 30% OFF on Kids Entry Ticket!',
                         style: TextStyle(
-                          fontSize: 16, // Adjusted font size
+                          fontSize: 16,
                           color: Colors.white,
                         ),
                       ),
@@ -463,37 +458,12 @@ class UsePointsSection extends StatelessWidget {
             child: Text(
               points,
               style: TextStyle(
-                fontSize: 16, // Adjusted font size
+                fontSize: 16,
                 color: Colors.white,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class EasterEggIcon extends StatefulWidget {
-  @override
-  _EasterEggIconState createState() => _EasterEggIconState();
-}
-
-class _EasterEggIconState extends State<EasterEggIcon> {
-  bool isCracked = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          isCracked = !isCracked;
-        });
-      },
-      child: Icon(
-        isCracked ? Icons.egg : Icons.egg_outlined,
-        color: Colors.white,
-        size: 100, // Increased size for the Easter egg icon
       ),
     );
   }
