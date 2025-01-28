@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
 import 'lemonade.dart'; // Replace with the actual file path of the LemonadeGame class
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: GamesPage(),
-    );
-  }
-}
-
 class GamesPage extends StatelessWidget {
   final List<Map<String, dynamic>> games = [
     {

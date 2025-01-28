@@ -1,4 +1,5 @@
 import 'package:awal_kid_ipad_frontend/Header.dart';
+import 'package:awal_kid_ipad_frontend/games.dart';
 import 'package:awal_kid_ipad_frontend/wedgets/ProfileCard.dart';
 import 'package:awal_kid_ipad_frontend/wedgets/TasksSection.dart';
 import 'package:awal_kid_ipad_frontend/NavigationBar.dart' as custom;
@@ -56,12 +57,7 @@ class _HomePageState extends State<HomePage> {
 
     switch (_currentTab) {
       case 'Games':
-        return const Center(
-          child: Text(
-            'Games Page',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        );
+        return GamesPage();
       case 'Goals':
         return const GoalsPage(); // Use the actual GoalsPage widget
       default:
