@@ -33,7 +33,14 @@ class GamesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color(0xFFFF9500), // Set the background color
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/Jj.png'),
+            fit: BoxFit.cover,
+            alignment:
+                Alignment(0, -.8), // Move the background image up slightly
+          ),
+        ),
         child: Column(
           children: [
             HeaderSection(),
@@ -154,7 +161,7 @@ class _HeaderSectionState extends State<HeaderSection> {
                           width: 300, // Increased size significantly
                           height: 100,
                           child: Image.asset(
-                            'assets/images/secretemessage.png',
+                            'assets/images/news.png',
                             fit: BoxFit.contain, // Ensures full visibility
                           ),
                         ),
