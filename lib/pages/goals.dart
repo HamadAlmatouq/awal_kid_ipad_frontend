@@ -465,9 +465,9 @@ class _GoalsPageState extends State<GoalsPage>
                 ),
                 const SizedBox(height: 15),
                 const Text(
-                  'Increase your savings to reach your goals',
+                  'Save up and make your dreams come true!',
                   style: TextStyle(
-                    fontSize: 32, // Increased from 26
+                    fontSize: 36, // Increased from 26
                     fontWeight: FontWeight.w400,
                     color: Colors.white70,
                   ),
@@ -540,9 +540,9 @@ class _GoalsPageState extends State<GoalsPage>
                         child: Column(
                           children: [
                             const Text(
-                              'To unlock,\nyour savings should \nexceed this amount:',
+                              'To unlock,\nreach this amount:',
                               style: TextStyle(
-                                fontSize: 18, // Enlarged font size
+                                fontSize: 24, // Enlarged font size
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white70,
                               ),
@@ -551,7 +551,7 @@ class _GoalsPageState extends State<GoalsPage>
                             Text(
                               '${amount.toStringAsFixed(0)} KWD',
                               style: const TextStyle(
-                                fontSize: 22, // Enlarged font size
+                                fontSize: 28, // Enlarged font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
