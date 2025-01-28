@@ -9,12 +9,11 @@ class ProfileCard extends StatelessWidget {
 
   const ProfileCard({
     Key? key,
-    this.avatarUrl =
-        'https://dashboard.codeparrot.ai/api/assets/Z43jO3Tr0Kgj1uYG',
-    this.currentAccount = 23.030,
-    this.savings = 33.870,
-    this.steps = 2902,
-    this.points = 3213,
+    required this.avatarUrl,
+    required this.currentAccount,
+    required this.savings,
+    required this.steps,
+    required this.points,
   }) : super(key: key);
 
   @override
