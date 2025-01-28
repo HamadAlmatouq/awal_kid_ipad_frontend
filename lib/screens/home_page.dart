@@ -1,5 +1,5 @@
 import 'package:awal_kid_ipad_frontend/Header.dart';
-import 'package:awal_kid_ipad_frontend/games.dart';
+import 'package:awal_kid_ipad_frontend/pages/games.dart';
 import 'package:awal_kid_ipad_frontend/wedgets/ProfileCard.dart';
 import 'package:awal_kid_ipad_frontend/wedgets/TasksSection.dart';
 import 'package:awal_kid_ipad_frontend/NavigationBar.dart' as custom;
@@ -78,8 +78,8 @@ class _HomePageState extends State<HomePage> {
                       Expanded(
                         flex: 2,
                         child: ProfileCard(
-                          avatarUrl: userData!['avatarUrl'] ??
-                              'https://dashboard.codeparrot.ai/api/assets/Z43jO3Tr0Kgj1uYG',
+                          avatarUrl:
+                              'assets/images/avatar.png', // Changed from URL to local asset
                           currentAccount:
                               (userData!['balance'] as num).toDouble(),
                           savings: (userData!['savings'] as num).toDouble(),

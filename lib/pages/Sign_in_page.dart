@@ -60,24 +60,32 @@ class _CivilIDSignInState extends State<CivilIDSignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF38E22),
-              Color(0xFFF5A147),
-              Color(0xFFF6AE60),
-              Color(0xFFF49734),
-            ],
-            stops: [0.0, 0.33, 0.64, 0.97],
+    final mediaQuery = MediaQuery.of(context);
+
+    return MediaQuery(
+      data: mediaQuery.copyWith(
+        padding: EdgeInsets.zero,
+        viewPadding: EdgeInsets.zero,
+        viewInsets: mediaQuery.viewInsets.copyWith(bottom: 0),
+      ),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFFF38E22),
+                Color(0xFFF5A147),
+                Color(0xFFF6AE60),
+                Color(0xFFF49734),
+              ],
+              stops: [0.0, 0.33, 0.64, 0.97],
+            ),
           ),
-        ),
-        child: SafeArea(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

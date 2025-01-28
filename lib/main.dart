@@ -1,4 +1,4 @@
-import 'package:awal_kid_ipad_frontend/games.dart';
+import 'package:awal_kid_ipad_frontend/pages/games.dart';
 import 'package:awal_kid_ipad_frontend/pages/Sign_in_page.dart';
 import 'package:awal_kid_ipad_frontend/pages/sign_page.dart';
 import 'package:awal_kid_ipad_frontend/screens/home_page.dart';

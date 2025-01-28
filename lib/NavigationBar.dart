@@ -22,32 +22,50 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 90, // Adjusted height to avoid overflow
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: Color(0xFFDADADA),
-            width: 1,
-          ),
-        ),
+    final mediaQuery = MediaQuery.of(context);
+    // Set initial padding to prevent animation
+    return MediaQuery(
+      data: mediaQuery.copyWith(
+        padding: mediaQuery.padding.copyWith(bottom: 0),
+        viewPadding: mediaQuery.padding.copyWith(bottom: 0),
+        viewInsets: mediaQuery.viewInsets.copyWith(bottom: 0),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem('Games',
-              'https://dashboard.codeparrot.ai/api/assets/Z43jPHTr0Kgj1uYL'),
-          _buildNavItem('Home',
-              'https://dashboard.codeparrot.ai/api/assets/Z43jPHTr0Kgj1uYM'),
-          _buildNavItem('Goals',
-              'https://dashboard.codeparrot.ai/api/assets/Z43jPHTr0Kgj1uYN'),
-        ],
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 100, // Reduced from 120
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: Color(0xFFDADADA),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem('Games', Icons.videogame_asset),
+                  _buildNavItem('Home', Icons.home),
+                  _buildNavItem('Goals', Icons.flag),
+                ],
+              ),
+            ),
+            Container(
+              height: mediaQuery.padding.bottom,
+              color: Colors.white,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildNavItem(String label, String iconUrl) {
+  Widget _buildNavItem(String label, IconData icon) {
     bool isSelected = _selectedTab == label;
 
     return GestureDetector(
@@ -56,16 +74,15 @@ class _NavigationBarState extends State<NavigationBar> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         transform: isSelected
-            ? Matrix4.translationValues(
-                0, -6, 0) // Raised effect for selected tab
+            ? Matrix4.translationValues(0, -6, 0) // Reduced from -8
             : Matrix4.identity(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 50, // Fixed width for consistency
-              height: 50, // Fixed height for consistency
+              width: 55, // Reduced from 65
+              height: 55, // Reduced from 65
               decoration: isSelected
                   ? const BoxDecoration(
                       shape: BoxShape.circle,
@@ -73,21 +90,18 @@ class _NavigationBarState extends State<NavigationBar> {
                     )
                   : null, // No background for unselected
               child: Center(
-                child: Image.network(
-                  iconUrl,
-                  width: isSelected ? 36 : 30, // Slightly enlarge for selected
-                  height: isSelected ? 36 : 30,
+                child: Icon(
+                  icon,
+                  size: isSelected ? 36 : 32, // Reduced from 42/36
                   color: isSelected ? Colors.white : Colors.black,
-                  fit: BoxFit.contain,
                 ),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 4), // Reduced from 6
             Text(
               label,
               style: TextStyle(
-                fontSize:
-                    isSelected ? 16 : 14, // Adjust font size for selection
+                fontSize: isSelected ? 18 : 16, // Reduced from 20/18
                 fontWeight: FontWeight.w600,
                 color: isSelected ? Colors.orange : Colors.black,
               ),

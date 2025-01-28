@@ -225,7 +225,8 @@ class ProfileCard extends StatelessWidget {
                 backgroundColor: Colors.white, // White circular frame
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(avatarUrl),
+                  backgroundImage: AssetImage(
+                      avatarUrl), // Changed from NetworkImage to AssetImage
                 ),
               ),
             ),
