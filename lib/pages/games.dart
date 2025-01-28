@@ -126,12 +126,12 @@ class _HeaderSectionState extends State<HeaderSection> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Image.network(
-                  'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png',
-                  width: 26,
-                  height: 26,
-                  color: Colors.white,
+                padding: const EdgeInsets.only(left: 2.0),
+                child: Image.asset(
+                  'assets/images/W.png',
+                  width: 100, // Adjust the width if necessary
+                  height: 100, // Adjust the height if necessary
+                  // Apply color if you want to tint the image
                 ),
               ),
             ],
@@ -158,7 +158,7 @@ class _HeaderSectionState extends State<HeaderSection> {
                             BorderRadius.circular(10), // Rounded edges
                         child: Container(
                           width: 300, // Increased size significantly
-                          height: 300,
+                          height: 100,
                           child: Image.asset(
                             'assets/images/secretemessage.png',
                             fit: BoxFit.contain, // Ensures full visibility
@@ -200,15 +200,14 @@ class _HeaderSectionState extends State<HeaderSection> {
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(0.1),
                       ),
-                      child: IconButton(
-                        icon: Icon(Icons.add, color: Colors.white),
-                        onPressed: () {
-                          // Handle points history display
+                      child: GestureDetector(
+                        onTap: () {
+                          // Add your onPressed functionality here
                         },
-                        padding: EdgeInsets.all(4),
-                        constraints: BoxConstraints(
-                          minWidth: 32,
-                          minHeight: 32,
+                        child: Image.asset(
+                          'assets/images/Vector.png',
+                          height: 24.0, // Adjust the size as needed
+                          width: 24.0, // Adjust the size as needed
                         ),
                       ),
                     ),
@@ -321,11 +320,11 @@ class GameCard extends StatelessWidget {
                         ),
                         if (isGift) ...[
                           SizedBox(width: 8),
-                          Icon(
-                            Icons.card_giftcard,
-                            color: Colors.white,
-                            size: 30,
-                          ),
+                          // Icon(
+                          //   Icons.card_giftcard,
+                          //   color: Colors.white,
+                          //   size: 30,
+                          // ),
                         ],
                       ],
                     ),
@@ -482,15 +481,15 @@ class UsePointsSection extends StatelessWidget {
               ),
             ],
           ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 28, // Increased icon size slightly
-            ),
-          ),
+          // Positioned(
+          //   top: 8,
+          //   right: 8,
+          //   child: Icon(
+          //     Icons.add,
+          //     color: Colors.white,
+          //     size: 28, // Increased icon size slightly
+          //   ),
+          // ),
           Positioned(
             bottom: 8,
             right: 8,
