@@ -465,23 +465,33 @@ class _GoalsPageState extends State<GoalsPage>
                 Expanded(
                   child: Stack(
                     children: [
-                      // Achieved goal (left)
+                      // Replace the Achieved goal (left) position with Starting point
                       Positioned(
-                        left: previousGoalPosition.dx -
-                            150, // Adjusted to move card more to the left
+                        left: previousGoalPosition.dx - 150,
                         top: previousGoalPosition.dy - 125,
                         child: Column(
                           children: [
-                            Image.asset(
-                              'assets/images/card.png',
-                              width: 200, // Increased from 150
-                              height: 200, // Increased from 150
+                            Container(
+                              width: 200,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF38E22),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.star,
+                                  size: 80,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            const SizedBox(height: 5),
+                            const SizedBox(height: 10),
                             const Text(
-                              'Stanley Cup',
+                              'Starting Point',
                               style: TextStyle(
-                                fontSize: 20, // Enlarged font size
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
