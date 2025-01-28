@@ -20,8 +20,7 @@ class GamesPage extends StatelessWidget {
       'imageUrl':
           'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/rectangl.png',
       'title': 'Lemonade stand',
-      'description':
-          'this is a game description which is about lemons becoming juice',
+      'description': 'it is about lemons becoming juice',
       'points': 100,
       'isGift': true,
     },
@@ -54,19 +53,25 @@ class GamesPage extends StatelessWidget {
           children: [
             HeaderSection(),
             Padding(
-              padding: EdgeInsets.only(left: 16.0, top: 16.0),
+              padding: EdgeInsets.only(
+                left: 16.0,
+                top: 16.0,
+                right: 16.0,
+                bottom: 16.0,
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Increase your points by playing these games',
                   style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white.withOpacity(0.8),
-                    fontWeight: FontWeight.w400,
+                    fontSize: 28, // Enlarged font size
+                    color: Colors.white.withOpacity(0.9),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ),
+            SizedBox(height: 16), // Added padding below the text
             Expanded(
               child: ListView(
                 children: [
@@ -216,8 +221,8 @@ class GameCard extends StatelessWidget {
         }
       },
       child: Container(
-        width: 500,
-        height: 300,
+        width: 500, // Adjusted width for larger images
+        height: 300, // Adjusted height for larger images
         decoration: BoxDecoration(
           color: Color(0xFFF7B977),
           borderRadius: BorderRadius.circular(20),
@@ -225,8 +230,8 @@ class GameCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 254,
-              height: 254,
+              width: 254, // Set image width to 254
+              height: 254, // Set image height to 254
               margin: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -251,25 +256,25 @@ class GameCard extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(height: 8),
                     Text(
                       'Game',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white.withOpacity(0.6),
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
                         color: Colors.white.withOpacity(0.6),
                       ),
                     ),
                     SizedBox(height: 8),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Text(
@@ -397,8 +402,8 @@ class UsePointsSection extends StatelessWidget {
     required String points,
   }) {
     return Container(
-      width: 300,
-      height: 200,
+      width: 600, // Doubled the width for the points card
+      height: 200, // Kept the height same
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.25),
         borderRadius: BorderRadius.circular(20),
@@ -411,29 +416,29 @@ class UsePointsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
                   image,
-                  width: 150,
-                  height: 200,
+                  width: 250, // Increased image width proportionally
+                  height: 200, // Matches the container height
                   fit: BoxFit.cover,
                 ),
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.network(
                         logo,
-                        width: 100,
-                        height: 50,
+                        width: 150, // Adjusted for larger cards
+                        height: 60, // Slightly increased height
                         fit: BoxFit.contain,
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 8),
                       Text(
                         'Enjoy a 30% OFF on Kids Entry Ticket!',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 18, // Slightly larger font size
                           color: Colors.white,
                         ),
                       ),
@@ -449,7 +454,7 @@ class UsePointsSection extends StatelessWidget {
             child: Icon(
               Icons.add,
               color: Colors.white,
-              size: 24,
+              size: 28, // Increased icon size slightly
             ),
           ),
           Positioned(
@@ -458,7 +463,7 @@ class UsePointsSection extends StatelessWidget {
             child: Text(
               points,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18, // Slightly larger font size
                 color: Colors.white,
               ),
             ),
@@ -468,3 +473,247 @@ class UsePointsSection extends StatelessWidget {
     );
   }
 }
+//   Widget _buildShopCard({
+//     required String image,
+//     required String logo,
+//     required String points,
+//   }) {
+//     return Container(
+//       width: 350, // Increased width for the points card
+//       height: 200,
+//       decoration: BoxDecoration(
+//         color: Colors.white.withOpacity(0.25),
+//         borderRadius: BorderRadius.circular(20),
+//       ),
+//       child: Stack(
+//         children: [
+//           Row(
+//             children: [
+//               ClipRRect(
+//                 borderRadius: BorderRadius.circular(20),
+//                 child: Image.network(
+//                   image,
+//                   width: 170,
+//                   height: 200,
+//                   fit: BoxFit.cover,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: Padding(
+//                   padding: EdgeInsets.all(8.0),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Image.network(
+//                         logo,
+//                         width: 120,
+//                         height: 50,
+//                         fit: BoxFit.contain,
+//                       ),
+//                       SizedBox(height: 4),
+//                       Text(
+//                         'Enjoy a 30% OFF on Kids Entry Ticket!',
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           color: Colors.white,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           Positioned(
+//             top: 8,
+//             right: 8,
+//             child: Icon(
+//               Icons.add,
+//               color: Colors.white,
+//               size: 24,
+//             ),
+//           ),
+//           Positioned(
+//             bottom: 8,
+//             right: 8,
+//             child: Text(
+//               points,
+//               style: TextStyle(
+//                 fontSize: 16,
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+// class UsePointsSection extends StatelessWidget {
+//   final String title;
+//   final List<Map<String, String>> cards;
+
+//   UsePointsSection({
+//     this.title = 'Use Your Points:',
+//     this.cards = const [
+//       {
+//         'image':
+//             'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/screensh.png',
+//         'logo':
+//             'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/logo.png',
+//         'points': '3213/1150',
+//       },
+//       {
+//         'image':
+//             'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/screensh-2.png',
+//         'logo':
+//             'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/logo-2.png',
+//         'points': '3213/1150',
+//       },
+//       {
+//         'image':
+//             'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/screensh-3.png',
+//         'logo':
+//             'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/logo-3.png',
+//         'points': '3213/1500',
+//       },
+//     ],
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: EdgeInsets.symmetric(vertical: 16.0),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Padding(
+//             padding: EdgeInsets.only(left: 16.0, bottom: 16.0),
+//             child: Text(
+//               title,
+//               style: TextStyle(
+//                 fontSize: 32,
+//                 fontWeight: FontWeight.w600,
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ),
+//           Container(
+//             height: 200,
+//             child: ListView.builder(
+//               scrollDirection: Axis.horizontal,
+//               padding: EdgeInsets.symmetric(horizontal: 16.0),
+//               itemCount: cards.length,
+//               itemBuilder: (context, index) {
+//                 return Padding(
+//                   padding: EdgeInsets.only(right: 16.0),
+//                   child: GestureDetector(
+//                     onTap: () {
+//                       showDialog(
+//                         context: context,
+//                         builder: (context) => AlertDialog(
+//                           title: Text('Card Information'),
+//                           content: Text(
+//                               'Image: ${cards[index]['image']}\nLogo: ${cards[index]['logo']}\nPoints: ${cards[index]['points']}'),
+//                           actions: [
+//                             TextButton(
+//                               onPressed: () => Navigator.pop(context),
+//                               child: Text('Close'),
+//                             ),
+//                           ],
+//                         ),
+//                       );
+//                     },
+//                     child: _buildShopCard(
+//                       image: cards[index]['image']!,
+//                       logo: cards[index]['logo']!,
+//                       points: cards[index]['points']!,
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildShopCard({
+//     required String image,
+//     required String logo,
+//     required String points,
+//   }) {
+//     return Container(
+//       width: 300,
+//       height: 200,
+//       decoration: BoxDecoration(
+//         color: Colors.white.withOpacity(0.25),
+//         borderRadius: BorderRadius.circular(20),
+//       ),
+//       child: Stack(
+//         children: [
+//           Row(
+//             children: [
+//               ClipRRect(
+//                 borderRadius: BorderRadius.circular(20),
+//                 child: Image.network(
+//                   image,
+//                   width: 150,
+//                   height: 200,
+//                   fit: BoxFit.cover,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: Padding(
+//                   padding: EdgeInsets.all(8.0),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Image.network(
+//                         logo,
+//                         width: 100,
+//                         height: 50,
+//                         fit: BoxFit.contain,
+//                       ),
+//                       SizedBox(height: 4),
+//                       Text(
+//                         'Enjoy a 30% OFF on Kids Entry Ticket!',
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           color: Colors.white,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           Positioned(
+//             top: 8,
+//             right: 8,
+//             child: Icon(
+//               Icons.add,
+//               color: Colors.white,
+//               size: 24,
+//             ),
+//           ),
+//           Positioned(
+//             bottom: 8,
+//             right: 8,
+//             child: Text(
+//               points,
+//               style: TextStyle(
+//                 fontSize: 16,
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
