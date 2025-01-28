@@ -103,21 +103,30 @@ class GamesPage extends StatelessWidget {
   }
 }
 
-class HeaderSection extends StatelessWidget {
+class HeaderSection extends StatefulWidget {
   const HeaderSection({Key? key}) : super(key: key);
+
+  @override
+  _HeaderSectionState createState() => _HeaderSectionState();
+}
+
+class _HeaderSectionState extends State<HeaderSection> {
+  int eggState = 1; // Tracks the current egg state (1, 2, 3)
+  bool isEggBroken = false; // Indicates if the egg has broken
 
   @override
   Widget build(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
         minWidth: 360,
-        minHeight: 80,
+        minHeight: 140, // Increased height for better spacing
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Games Title
           Row(
             children: [
               Text(
@@ -140,8 +149,46 @@ class HeaderSection extends StatelessWidget {
               ),
             ],
           ),
+
+          // Right Section: Egg + Points
           Row(
             children: [
+              // Interactive Egg or Secret Message
+              GestureDetector(
+                onTap: () {
+                  if (!isEggBroken) {
+                    setState(() {
+                      eggState++;
+                      if (eggState > 3) {
+                        isEggBroken = true; // Egg breaks
+                      }
+                    });
+                  }
+                },
+                child: isEggBroken
+                    ? ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(10), // Rounded edges
+                        child: Container(
+                          width: 300, // Increased size significantly
+                          height: 300,
+                          child: Image.asset(
+                            'assets/images/secretemessage.png',
+                            fit: BoxFit.contain, // Ensures full visibility
+                          ),
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/images/egg$eggState.${eggState == 1 ? "GIF" : "png"}',
+                        width: 120, // Increased egg size
+                        height: 120,
+                        fit: BoxFit.contain,
+                      ),
+              ),
+
+              SizedBox(width: 20), // Space between egg and points box
+
+              // Points Box
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -188,6 +235,483 @@ class HeaderSection extends StatelessWidget {
     );
   }
 }
+// class HeaderSection extends StatefulWidget {
+//   const HeaderSection({Key? key}) : super(key: key);
+
+//   @override
+//   _HeaderSectionState createState() => _HeaderSectionState();
+// }
+
+// class _HeaderSectionState extends State<HeaderSection> {
+//   int eggState = 1; // To track the current state of the egg (1, 2, or 3)
+//   bool isEggBroken = false; // To track if the egg has broken
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       constraints: BoxConstraints(
+//         minWidth: 360,
+//         minHeight: 120, // Increased height for better spacing
+//       ),
+//       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: [
+//           // Games Title
+//           Row(
+//             children: [
+//               Text(
+//                 'Games',
+//                 style: TextStyle(
+//                   fontSize: 48,
+//                   fontWeight: FontWeight.w600,
+//                   color: Colors.white,
+//                   height: 1.2,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.only(left: 8.0),
+//                 child: Image.network(
+//                   'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png',
+//                   width: 26,
+//                   height: 26,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//             ],
+//           ),
+
+//           // Right Section: Egg + Points
+//           Row(
+//             children: [
+//               // Interactive Egg or Secret Message
+//               GestureDetector(
+//                 onTap: () {
+//                   if (!isEggBroken) {
+//                     setState(() {
+//                       eggState++;
+//                       if (eggState > 3) {
+//                         isEggBroken = true; // Egg breaks
+//                       }
+//                     });
+//                   }
+//                 },
+//                 child: isEggBroken
+//                     ? ClipRRect(
+//                         borderRadius:
+//                             BorderRadius.circular(10), // Rounded edges
+//                         child: Container(
+//                           width: 200, // Larger width
+//                           height: 200, // Larger height
+//                           decoration: BoxDecoration(
+//                             borderRadius: BorderRadius.circular(10),
+//                             border: Border.all(
+//                                 color: Colors.white,
+//                                 width: 2), // Optional border
+//                           ),
+//                           child: Image.asset(
+//                             'assets/images/secretemessage.png',
+//                             fit: BoxFit.contain, // Ensures full visibility
+//                           ),
+//                         ),
+//                       )
+//                     : Image.asset(
+//                         'assets/images/egg$eggState.${eggState == 1 ? "GIF" : "png"}',
+//                         width: 100, // Increased egg size
+//                         height: 100,
+//                         fit: BoxFit.contain,
+//                       ),
+//               ),
+
+//               SizedBox(width: 20), // Space between egg and points box
+
+//               // Points Box
+//               Container(
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+//                 decoration: BoxDecoration(
+//                   color: Colors.white.withOpacity(0.25),
+//                   borderRadius: BorderRadius.circular(8.0),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Text(
+//                       'Points: 3213',
+//                       style: TextStyle(
+//                         fontSize: 24,
+//                         fontWeight: FontWeight.w700,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                     SizedBox(width: 8.0),
+//                     Container(
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.white.withOpacity(0.1),
+//                       ),
+//                       child: IconButton(
+//                         icon: Icon(Icons.add, color: Colors.white),
+//                         onPressed: () {
+//                           // Handle points history display
+//                         },
+//                         padding: EdgeInsets.all(4),
+//                         constraints: BoxConstraints(
+//                           minWidth: 32,
+//                           minHeight: 32,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// class HeaderSection extends StatefulWidget {
+//   const HeaderSection({Key? key}) : super(key: key);
+
+//   @override
+//   _HeaderSectionState createState() => _HeaderSectionState();
+// }
+
+// class _HeaderSectionState extends State<HeaderSection> {
+//   int eggState = 1; // To track the current state of the egg (1, 2, or 3)
+//   bool isEggBroken = false; // To track if the egg has broken
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       constraints: BoxConstraints(
+//         minWidth: 360,
+//         minHeight: 100, // Increased height for better spacing
+//       ),
+//       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: [
+//           // Games Title
+//           Row(
+//             children: [
+//               Text(
+//                 'Games',
+//                 style: TextStyle(
+//                   fontSize: 48,
+//                   fontWeight: FontWeight.w600,
+//                   color: Colors.white,
+//                   height: 1.2,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.only(left: 8.0),
+//                 child: Image.network(
+//                   'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png',
+//                   width: 26,
+//                   height: 26,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//             ],
+//           ),
+
+//           // Right Section: Egg + Points
+//           Row(
+//             children: [
+//               // Interactive Egg
+//               GestureDetector(
+//                 onTap: () {
+//                   if (!isEggBroken) {
+//                     setState(() {
+//                       eggState++;
+//                       if (eggState > 3) {
+//                         isEggBroken = true; // Break the egg
+//                       }
+//                     });
+//                   }
+//                 },
+//                 child: isEggBroken
+//                     ? ClipRRect(
+//                         borderRadius: BorderRadius.circular(5),
+//                         child: Image.asset(
+//                           'assets/images/secretemessage.png',
+//                           width: 120, // Increased size
+//                           height: 120,
+//                           fit: BoxFit.contain, // Ensures it appears fully
+//                         ),
+//                       )
+//                     : Image.asset(
+//                         'assets/images/egg$eggState.${eggState == 1 ? "GIF" : "png"}',
+//                         width: 100, // Increased size
+//                         height: 100,
+//                         fit: BoxFit.contain,
+//                       ),
+//               ),
+
+//               SizedBox(width: 20), // Space between egg and points box
+
+//               // Points Box
+//               Container(
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+//                 decoration: BoxDecoration(
+//                   color: Colors.white.withOpacity(0.25),
+//                   borderRadius: BorderRadius.circular(8.0),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Text(
+//                       'Points: 3213',
+//                       style: TextStyle(
+//                         fontSize: 24,
+//                         fontWeight: FontWeight.w700,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                     SizedBox(width: 8.0),
+//                     Container(
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.white.withOpacity(0.1),
+//                       ),
+//                       child: IconButton(
+//                         icon: Icon(Icons.add, color: Colors.white),
+//                         onPressed: () {
+//                           // Handle points history display
+//                         },
+//                         padding: EdgeInsets.all(4),
+//                         constraints: BoxConstraints(
+//                           minWidth: 32,
+//                           minHeight: 32,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+// class HeaderSection extends StatefulWidget {
+//   const HeaderSection({Key? key}) : super(key: key);
+
+//   @override
+//   _HeaderSectionState createState() => _HeaderSectionState();
+// }
+
+// class _HeaderSectionState extends State<HeaderSection> {
+//   int eggState = 1; // To track the current state of the egg (1, 2, or 3)
+//   bool isEggBroken = false; // To track if the egg has broken
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       constraints: BoxConstraints(
+//         minWidth: 360,
+//         minHeight: 80,
+//       ),
+//       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: [
+//           Row(
+//             children: [
+//               GestureDetector(
+//                 onTap: () {
+//                   if (!isEggBroken) {
+//                     setState(() {
+//                       eggState++;
+//                       if (eggState > 3) {
+//                         isEggBroken = true; // Break the egg
+//                       }
+//                     });
+//                   }
+//                 },
+//                 child: isEggBroken
+//                     ? Container(
+//                         width: 80,
+//                         height: 80,
+//                         decoration: BoxDecoration(
+//                           borderRadius: BorderRadius.circular(5),
+//                           image: DecorationImage(
+//                             image:
+//                                 AssetImage('assets/images/secretemessage.png'),
+//                             fit: BoxFit.cover,
+//                           ),
+//                         ),
+//                       )
+//                     : Image.asset(
+//                         'assets/images/egg$eggState.${eggState == 1 ? "GIF" : "png"}',
+//                         width: 80,
+//                         height: 80,
+//                       ),
+//               ),
+//               SizedBox(width: 16),
+//               Text(
+//                 'Games',
+//                 style: TextStyle(
+//                   fontSize: 48,
+//                   fontWeight: FontWeight.w600,
+//                   color: Colors.white,
+//                   height: 1.2,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.only(left: 8.0),
+//                 child: Image.network(
+//                   'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png',
+//                   width: 26,
+//                   height: 26,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//             ],
+//           ),
+//           Row(
+//             children: [
+//               Container(
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+//                 decoration: BoxDecoration(
+//                   color: Colors.white.withOpacity(0.25),
+//                   borderRadius: BorderRadius.circular(8.0),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Text(
+//                       'Points: 3213',
+//                       style: TextStyle(
+//                         fontSize: 24,
+//                         fontWeight: FontWeight.w700,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                     SizedBox(width: 8.0),
+//                     Container(
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.white.withOpacity(0.1),
+//                       ),
+//                       child: IconButton(
+//                         icon: Icon(Icons.add, color: Colors.white),
+//                         onPressed: () {
+//                           // Handle points history display
+//                         },
+//                         padding: EdgeInsets.all(4),
+//                         constraints: BoxConstraints(
+//                           minWidth: 32,
+//                           minHeight: 32,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+// class HeaderSection extends StatelessWidget {
+//   const HeaderSection({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       constraints: BoxConstraints(
+//         minWidth: 360,
+//         minHeight: 80,
+//       ),
+//       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: [
+//           Row(
+//             children: [
+//               Text(
+//                 'Games',
+//                 style: TextStyle(
+//                   fontSize: 48,
+//                   fontWeight: FontWeight.w600,
+//                   color: Colors.white,
+//                   height: 1.2,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.only(left: 8.0),
+//                 child: Image.network(
+//                   'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/vector.png',
+//                   width: 26,
+//                   height: 26,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//             ],
+//           ),
+//           Row(
+//             children: [
+//               Container(
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+//                 decoration: BoxDecoration(
+//                   color: Colors.white.withOpacity(0.25),
+//                   borderRadius: BorderRadius.circular(8.0),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Text(
+//                       'Points: 3213',
+//                       style: TextStyle(
+//                         fontSize: 24,
+//                         fontWeight: FontWeight.w700,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                     SizedBox(width: 8.0),
+//                     Container(
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.white.withOpacity(0.1),
+//                       ),
+//                       child: IconButton(
+//                         icon: Icon(Icons.add, color: Colors.white),
+//                         onPressed: () {
+//                           // Handle points history display
+//                         },
+//                         padding: EdgeInsets.all(4),
+//                         constraints: BoxConstraints(
+//                           minWidth: 32,
+//                           minHeight: 32,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class GameCard extends StatelessWidget {
   final String imageUrl;
