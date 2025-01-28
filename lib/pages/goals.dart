@@ -427,6 +427,17 @@ class _GoalsPageState extends State<GoalsPage>
       ),
       body: Stack(
         children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/Goal.png'), // Background image
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter, // Align the image to the top
+              ),
+            ),
+            margin: const EdgeInsets.only(
+                top: 5.0), // Minimal push down by 5 pixels
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: 30.0), // Increased padding
