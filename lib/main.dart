@@ -10,6 +10,10 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'NavigationBar.dart' as custom;
 import 'Header.dart';
+import 'ProfileCard.dart';
+import 'goals.dart';
+import 'TasksSection.dart';
+import 'lemonade.dart'; // Import your LemonadeGame widget.
 import 'wedgets/ProfileCard.dart';
 import 'wedgets/TasksSection.dart';
 
@@ -44,6 +48,11 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/home',
           builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: '/lemonade',
+          builder: (context, state) =>
+              LemonadeGame(), // Add the Lemonade Game route.
         ),
       ],
     );
