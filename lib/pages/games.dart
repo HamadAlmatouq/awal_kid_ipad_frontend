@@ -1,80 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import '../lemonade.dart';
 
 class GamesPage extends StatelessWidget {
   final List<Map<String, dynamic>> games = [
     {
-      'imageUrl':
-          'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/rectangl.png',
+      'imagePath': 'assets/images/LMN.png',
       'title': 'Lemonade stand',
-      'description': 'it is about lemons becoming juice',
+      'description': 'It is about lemons becoming juice',
       'points': 100,
       'isGift': true,
+      'isComingSoon': false,
     },
     {
-      'imageUrl':
-          'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/rectangl-2.png',
+      'imagePath': 'assets/images/COINC.png',
       'title': 'Coin Collector',
-      'description':
-          'this is a game description which is about collecting coins',
+      'description': 'This is a game about collecting coins',
       'points': 50,
       'isGift': true,
+      'isComingSoon': true,
     },
     {
-      'imageUrl':
-          'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/rectangl-3.png',
-      'title': 'Treasure Hunt',
-      'description':
-          'this is a game description which is about finding treasures',
+      'imagePath': 'assets/images/INVQ.png',
+      'title': 'Investment Quiz',
+      'description': 'Test your knowledge about investments',
       'points': 75,
       'isGift': true,
+      'isComingSoon': true,
     },
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xFFFF9500), // Set the background color to #F7B14C
+        color: const Color(0xFFFF9500), // Set the background color
         child: Column(
           children: [
             HeaderSection(),
             Padding(
-              padding: EdgeInsets.only(
-                left: 16.0,
-                top: 16.0,
-                right: 16.0,
-                bottom: 16.0,
-              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Increase your points by playing these games',
                   style: TextStyle(
-                    fontSize: 28, // Enlarged font size
+                    fontSize: 28,
                     color: Colors.white.withOpacity(0.9),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 16), // Added padding below the text
+            const SizedBox(height: 16), // Added padding below the text
             Expanded(
               child: ListView(
                 children: [
-                  Container(
+                  SizedBox(
                     height: 300, // Adjusted height for larger images
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: games.length,
                       itemBuilder: (context, index) => Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: GameCard(
-                          imageUrl: games[index]['imageUrl'],
+                          imagePath: games[index]['imagePath'],
                           title: games[index]['title'],
                           description: games[index]['description'],
                           points: games[index]['points'],
                           isGift: games[index]['isGift'],
+                          isComingSoon: games[index]['isComingSoon'],
                         ),
                       ),
                     ),
@@ -117,7 +112,7 @@ class _HeaderSectionState extends State<HeaderSection> {
           Row(
             children: [
               Text(
-                'Games',
+                'Games ',
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.w600,
@@ -127,11 +122,10 @@ class _HeaderSectionState extends State<HeaderSection> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 2.0),
-                child: Image.asset(
-                  'assets/images/W.png',
-                  width: 100, // Adjust the width if necessary
-                  height: 100, // Adjust the height if necessary
-                  // Apply color if you want to tint the image
+                child: Icon(
+                  Icons.videogame_asset, // Joystick icon
+                  size: 80, // Adjusted to match the original image size
+                  color: Colors.white, // Matches the theme color
                 ),
               ),
             ],
@@ -223,26 +217,28 @@ class _HeaderSectionState extends State<HeaderSection> {
 }
 
 class GameCard extends StatelessWidget {
-  final String imageUrl;
+  final String imagePath;
   final String title;
   final String description;
   final int points;
   final bool isGift;
+  final bool isComingSoon;
 
   const GameCard({
     Key? key,
-    required this.imageUrl,
+    required this.imagePath,
     required this.title,
     required this.description,
     required this.points,
     required this.isGift,
+    required this.isComingSoon,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (title == 'Lemonade stand') {
+        if (!isComingSoon && title == 'Lemonade stand') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => LemonadeGame()),
@@ -253,96 +249,110 @@ class GameCard extends StatelessWidget {
           );
         }
       },
-      child: Container(
-        width: 500, // Adjusted width for larger images
-        height: 300, // Adjusted height for larger images
-        decoration: BoxDecoration(
-          color: Colors.white, // Changed background to white
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: Offset(0, 4), // Subtle shadow for depth
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 254, // Set image width to 254
-              height: 254, // Set image height to 254
-              margin: EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
+      child: Stack(
+        children: [
+          Container(
+            width: 500,
+            height: 300,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
-              ),
+              ],
             ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFFF9500), // Orange text
-                      ),
+            child: Row(
+              children: [
+                Container(
+                  width: 180,
+                  height: 300,
+                  margin: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                      image: AssetImage(imagePath),
+                      fit: BoxFit.cover,
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Game',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFFFF9500)
-                            .withOpacity(0.7), // Lighter orange
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFFF9500)
-                            .withOpacity(0.8), // Slightly darker orange
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Row(
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '+$points',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFFFF9500), // Orange for points
+                          title,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFFF9500),
                           ),
                         ),
-                        if (isGift) ...[
-                          SizedBox(width: 8),
-                          Icon(
-                            Icons.card_giftcard,
-                            color: Color(0xFFFF9500), // Orange gift icon
-                            size: 30,
+                        const SizedBox(height: 8),
+                        Text(
+                          description,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.black54,
                           ),
-                        ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Text(
+                              '+$points',
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFFF9500),
+                              ),
+                            ),
+                            if (isGift) ...[
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.card_giftcard,
+                                color: Color(0xFFFF9500),
+                                size: 30,
+                              ),
+                            ],
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isComingSoon)
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 71, 71, 71),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  'Coming Soon',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -356,25 +366,22 @@ class UsePointsSection extends StatelessWidget {
     this.title = 'Use Your Points:',
     this.cards = const [
       {
-        'image':
-            'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/screensh.png',
-        'logo':
-            'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/logo.png',
-        'points': '3213/1150',
+        'brand': 'Dabdoob',
+        'image': 'assets/images/dabdoobi.png',
+        'logo': 'assets/images/dabdob.png',
+        'description': 'Get 20% OFF on your next toy purchase!',
       },
       {
-        'image':
-            'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/screensh-2.png',
-        'logo':
-            'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/logo-2.png',
-        'points': '3213/1150',
+        'brand': 'Kidzania',
+        'image': 'assets/images/kidzaniai.png',
+        'logo': 'assets/images/kids.png',
+        'description': 'Enjoy 30% OFF on Kids Entry Ticket!',
       },
       {
-        'image':
-            'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/screensh-3.png',
-        'logo':
-            'https://dashboard.codeparrot.ai/api/image/Z5HohvA8XwfbJP7Y/logo-3.png',
-        'points': '3213/1500',
+        'brand': 'SEPHORA',
+        'image': 'assets/images/sephorai.png',
+        'logo': 'assets/images/sephora.png',
+        'description': 'Redeem your points for a free beauty sample!',
       },
     ],
   });
@@ -382,34 +389,35 @@ class UsePointsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 16.0, bottom: 16.0),
+            padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
             child: Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
             ),
           ),
-          Container(
+          SizedBox(
             height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               itemCount: cards.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: EdgeInsets.only(right: 16.0),
+                  padding: const EdgeInsets.only(right: 16.0),
                   child: _buildShopCard(
+                    brand: cards[index]['brand']!,
                     image: cards[index]['image']!,
                     logo: cards[index]['logo']!,
-                    points: cards[index]['points']!,
+                    description: cards[index]['description']!,
                   ),
                 );
               },
@@ -421,74 +429,70 @@ class UsePointsSection extends StatelessWidget {
   }
 
   Widget _buildShopCard({
+    required String brand,
     required String image,
     required String logo,
-    required String points,
+    required String description,
   }) {
     return Container(
-      width: 600, // Increased the width of the points card
-      height: 200, // Kept the height the same
+      width: 560,
+      height: 200,
       decoration: BoxDecoration(
-        color: Colors.white, // Card background set to white
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: Offset(0, 4), // Subtle shadow for depth
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Stack(
+      child: Row(
         children: [
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  image,
-                  width: 150, // Adjusted image width to fit wider card
-                  height: 200, // Matches the container height
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.network(
-                        logo,
-                        width: 120, // Adjusted logo width for wider card
-                        height: 50, // Slightly larger height for the logo
-                        fit: BoxFit.contain,
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Enjoy a 30% OFF on Kids Entry Ticket!',
-                        style: TextStyle(
-                          fontSize: 18, // Slightly larger font size
-                          color: Color(0xFFFF9500), // Orange text
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              bottomLeft: Radius.circular(20),
+            ),
+            child: Image.asset(
+              image,
+              width: 150,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
           ),
-          Positioned(
-            bottom: 8,
-            right: 8,
-            child: Text(
-              points,
-              style: TextStyle(
-                fontSize: 18, // Slightly larger font size
-                color: Color(0xFFFF9500), // Orange for points
-                fontWeight: FontWeight.bold,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    logo,
+                    width: 100,
+                    height: 50,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    brand,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFFF9500),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

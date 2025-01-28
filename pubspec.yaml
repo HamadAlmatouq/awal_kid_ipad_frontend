@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   video_player: ^2.2.19
+  iconsax: ^0.0.8
   shared_preferences: ^2.0.13
   dio: ^4.0.6
   dart_jsonwebtoken: ^2.14.2
