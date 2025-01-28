@@ -257,8 +257,15 @@ class GameCard extends StatelessWidget {
         width: 500, // Adjusted width for larger images
         height: 300, // Adjusted height for larger images
         decoration: BoxDecoration(
-          color: Color(0xFFF7B977),
+          color: Colors.white, // Changed background to white
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, 4), // Subtle shadow for depth
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -286,7 +293,7 @@ class GameCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: Color(0xFFFF9500), // Orange text
                       ),
                     ),
                     SizedBox(height: 8),
@@ -295,7 +302,8 @@ class GameCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white.withOpacity(0.6),
+                        color: Color(0xFFFF9500)
+                            .withOpacity(0.7), // Lighter orange
                       ),
                     ),
                     SizedBox(height: 8),
@@ -304,7 +312,8 @@ class GameCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Color(0xFFFF9500)
+                            .withOpacity(0.8), // Slightly darker orange
                       ),
                     ),
                     SizedBox(height: 16),
@@ -315,16 +324,16 @@ class GameCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: Color(0xFFFF9500), // Orange for points
                           ),
                         ),
                         if (isGift) ...[
                           SizedBox(width: 8),
-                          // Icon(
-                          //   Icons.card_giftcard,
-                          //   color: Colors.white,
-                          //   size: 30,
-                          // ),
+                          Icon(
+                            Icons.card_giftcard,
+                            color: Color(0xFFFF9500), // Orange gift icon
+                            size: 30,
+                          ),
                         ],
                       ],
                     ),
@@ -397,28 +406,10 @@ class UsePointsSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(right: 16.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Card Information'),
-                          content: Text(
-                              'Image: ${cards[index]['image']}\nLogo: ${cards[index]['logo']}\nPoints: ${cards[index]['points']}'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text('Close'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    child: _buildShopCard(
-                      image: cards[index]['image']!,
-                      logo: cards[index]['logo']!,
-                      points: cards[index]['points']!,
-                    ),
+                  child: _buildShopCard(
+                    image: cards[index]['image']!,
+                    logo: cards[index]['logo']!,
+                    points: cards[index]['points']!,
                   ),
                 );
               },
@@ -435,11 +426,18 @@ class UsePointsSection extends StatelessWidget {
     required String points,
   }) {
     return Container(
-      width: 600, // Doubled the width for the points card
-      height: 200, // Kept the height same
+      width: 600, // Increased the width of the points card
+      height: 200, // Kept the height the same
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.25),
+        color: Colors.white, // Card background set to white
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 4), // Subtle shadow for depth
+          ),
+        ],
       ),
       child: Stack(
         children: [
@@ -449,7 +447,7 @@ class UsePointsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
                   image,
-                  width: 250, // Increased image width proportionally
+                  width: 150, // Adjusted image width to fit wider card
                   height: 200, // Matches the container height
                   fit: BoxFit.cover,
                 ),
@@ -463,8 +461,8 @@ class UsePointsSection extends StatelessWidget {
                     children: [
                       Image.network(
                         logo,
-                        width: 150, // Adjusted for larger cards
-                        height: 60, // Slightly increased height
+                        width: 120, // Adjusted logo width for wider card
+                        height: 50, // Slightly larger height for the logo
                         fit: BoxFit.contain,
                       ),
                       SizedBox(height: 8),
@@ -472,7 +470,8 @@ class UsePointsSection extends StatelessWidget {
                         'Enjoy a 30% OFF on Kids Entry Ticket!',
                         style: TextStyle(
                           fontSize: 18, // Slightly larger font size
-                          color: Colors.white,
+                          color: Color(0xFFFF9500), // Orange text
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -488,7 +487,8 @@ class UsePointsSection extends StatelessWidget {
               points,
               style: TextStyle(
                 fontSize: 18, // Slightly larger font size
-                color: Colors.white,
+                color: Color(0xFFFF9500), // Orange for points
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

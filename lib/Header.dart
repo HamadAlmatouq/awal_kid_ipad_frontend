@@ -20,8 +20,8 @@ class Header extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Color(0xFFF38E22),
-            Color(0xFFF5A147),
+            Color.fromARGB(150, 243, 142, 34),
+            Color.fromARGB(150, 245, 161, 71),
           ],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -36,37 +36,37 @@ class Header extends StatelessWidget {
             child: Text(
               greeting,
               style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.w600,
+                fontSize: 42,
+                fontWeight: FontWeight.w800,
                 color: Colors.white,
                 fontFamily: 'Inter',
               ),
               textAlign: TextAlign.center,
             ),
           ),
-          Row(
-            children: [
-              IconButton(
-                icon: Image.network(
-                  'https://dashboard.codeparrot.ai/api/assets/Z43jJnTr0Kgj1uYE',
-                  width: 48,
-                  height: 46,
-                ),
-                onPressed: onEditTap,
-                iconSize: 48,
-              ),
-              SizedBox(width: 8),
-              IconButton(
-                icon: Image.network(
-                  'https://dashboard.codeparrot.ai/api/assets/Z43jJnTr0Kgj1uYF',
-                  width: 56,
-                  height: 57,
-                ),
-                onPressed: onNotificationTap,
-                iconSize: 56,
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     IconButton(
+          //       icon: Image.network(
+          //         'https://dashboard.codeparrot.ai/api/assets/Z43jJnTr0Kgj1uYE',
+          //         width: 48,
+          //         height: 46,
+          //       ),
+          //       onPressed: onEditTap,
+          //       iconSize: 48,
+          //     ),
+          //     SizedBox(width: 8),
+          //     IconButton(
+          //       icon: Image.network(
+          //         'https://dashboard.codeparrot.ai/api/assets/Z43jJnTr0Kgj1uYF',
+          //         width: 56,
+          //         height: 57,
+          //       ),
+          //       onPressed: onNotificationTap,
+          //       iconSize: 56,
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
