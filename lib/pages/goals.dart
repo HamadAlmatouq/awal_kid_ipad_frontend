@@ -286,6 +286,7 @@ class _GoalsPageState extends State<GoalsPage>
                                 '/kid/convertBalanceToSavings',
                                 data: {'amount': int.parse(amountText)},
                               );
+
                               if (response.statusCode == 200 && mounted) {
                                 final newSavings =
                                     savings + int.parse(amountText);
@@ -322,14 +323,43 @@ class _GoalsPageState extends State<GoalsPage>
 
                                 await _fetchSavings();
                               }
-                            } catch (e) {
-                              print('Error converting balance: $e');
+                            } on DioError catch (e) {
+                              String errorMessage = 'Failed to convert balance';
+
+                              // Check if the error response contains a message
+                              if (e.response?.data != null &&
+                                  e.response?.data is Map) {
+                                errorMessage =
+                                    e.response?.data['message'] ?? errorMessage;
+                              }
+
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(
-                                        'Failed to convert balance: ${e.toString()}'),
+                                    content: Text(errorMessage),
                                     backgroundColor: Colors.red,
+                                    duration: const Duration(seconds: 3),
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: const EdgeInsets.all(20),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text(
+                                        'An error occurred while processing your request'),
+                                    backgroundColor: Colors.red,
+                                    duration: const Duration(seconds: 3),
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: const EdgeInsets.all(20),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                   ),
                                 );
                               }

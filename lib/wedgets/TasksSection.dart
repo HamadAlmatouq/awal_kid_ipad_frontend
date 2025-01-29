@@ -108,6 +108,45 @@ class _TasksSectionState extends State<TasksSection> {
     await _fetchCompletedTasks();
   }
 
+  Widget _buildEmptyState() {
+    return Container(
+      height: 400, // Increased height for better visibility
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.assignment_outlined,
+              size: 120, // Increased icon size
+              color: const Color(0xFFF38E22).withOpacity(0.5),
+            ),
+            const SizedBox(height: 24), // Increased spacing
+            const Text(
+              'No Tasks Available',
+              style: TextStyle(
+                fontSize: 32, // Increased font size
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFF38E22),
+              ),
+            ),
+            const SizedBox(height: 16), // Increased spacing
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                'Your parent will assign tasks for you',
+                style: TextStyle(
+                  fontSize: 24, // Increased font size
+                  color: const Color(0xFFF38E22).withOpacity(0.7),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -134,20 +173,26 @@ class _TasksSectionState extends State<TasksSection> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ...tasks.map((task) =>
-                      TaskItem(task: task, onComplete: _completeTask)),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Completed:',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFFF38E22),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...completedTasks
-                      .map((task) => CompletedTaskItem(task: task)),
+                  if (tasks.isEmpty && completedTasks.isEmpty)
+                    _buildEmptyState()
+                  else ...[
+                    ...tasks.map((task) =>
+                        TaskItem(task: task, onComplete: _completeTask)),
+                    const SizedBox(height: 24),
+                    if (completedTasks.isNotEmpty) ...[
+                      Text(
+                        'Completed:',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFF38E22),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ...completedTasks
+                          .map((task) => CompletedTaskItem(task: task)),
+                    ],
+                  ],
                 ],
               ),
             ),

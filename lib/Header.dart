@@ -32,6 +32,12 @@ class Header extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          IconButton(
+            icon: Icon(Icons.menu, color: Colors.white, size: 32),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
           Expanded(
             child: Text(
               greeting,
